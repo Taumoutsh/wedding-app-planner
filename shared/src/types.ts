@@ -11,6 +11,7 @@ export interface Category {
   createdAt: Date;
   updatedAt: Date;
   averageProgress?: number;
+  totalPrice?: number;
 }
 
 export interface Task {
@@ -21,6 +22,7 @@ export interface Task {
   createdAt: Date;
   updatedAt: Date;
   averageProgress?: number;
+  totalPrice?: number;
 }
 
 export interface Subtask {
@@ -43,13 +45,15 @@ export interface UserDTO {
   username: string;
 }
 
-export interface CategoryDTO extends Omit<Category, 'averageProgress'> {
+export interface CategoryDTO extends Omit<Category, 'averageProgress' | 'totalPrice'> {
   averageProgress: number;
+  totalPrice: number;
   tasks?: TaskDTO[];
 }
 
-export interface TaskDTO extends Omit<Task, 'averageProgress'> {
+export interface TaskDTO extends Omit<Task, 'averageProgress' | 'totalPrice'> {
   averageProgress: number;
+  totalPrice: number;
   subtasks?: SubtaskDTO[];
 }
 

@@ -14,3 +14,7 @@ export const calculateWeightedAverage = (subtasks: Subtask[]): number => {
 
   return Math.round((weightedSum / totalWeight) * 100) / 100;
 };
+
+export const calculateTotalPrice = (subtasks: Subtask[]): number => {
+  return Math.round(subtasks.reduce((sum, subtask) => sum + (subtask.price || 0), 0) * 100) / 100;
+};

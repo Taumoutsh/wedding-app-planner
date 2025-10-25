@@ -2,7 +2,7 @@ import { Response } from 'express';
 import { prisma } from '../utils/db';
 import { AuthRequest } from '../middleware/auth';
 import { CreateCategoryRequest, UpdateCategoryRequest, CategoryDTO } from '@wedding-planner/shared';
-import { calculateWeightedAverage } from '../utils/calculations';
+import { calculateWeightedAverage, calculateTotalPrice } from '../utils/calculations';
 
 export const getAllCategories = async (req: AuthRequest, res: Response) => {
   try {
@@ -22,16 +22,19 @@ export const getAllCategories = async (req: AuthRequest, res: Response) => {
     const categoriesWithProgress: CategoryDTO[] = categories.map((category) => {
       const allSubtasks = category.tasks.flatMap((task) => task.subtasks);
       const averageProgress = calculateWeightedAverage(allSubtasks);
+      const totalPrice = calculateTotalPrice(allSubtasks);
 
       const tasks = category.tasks.map((task) => ({
         ...task,
         averageProgress: calculateWeightedAverage(task.subtasks),
+        totalPrice: calculateTotalPrice(task.subtasks),
         subtasks: task.subtasks,
       }));
 
       return {
         ...category,
         averageProgress,
+        totalPrice,
         tasks,
       };
     });
@@ -71,6 +74,7 @@ export const createCategory = async (req: AuthRequest, res: Response) => {
     const categoryWithProgress: CategoryDTO = {
       ...category,
       averageProgress: 0,
+      totalPrice: 0,
       tasks: [],
     };
 
@@ -110,16 +114,19 @@ export const updateCategory = async (req: AuthRequest, res: Response) => {
 
     const allSubtasks = category.tasks.flatMap((task) => task.subtasks);
     const averageProgress = calculateWeightedAverage(allSubtasks);
+    const totalPrice = calculateTotalPrice(allSubtasks);
 
     const tasks = category.tasks.map((task) => ({
       ...task,
       averageProgress: calculateWeightedAverage(task.subtasks),
+      totalPrice: calculateTotalPrice(task.subtasks),
       subtasks: task.subtasks,
     }));
 
     const categoryWithProgress: CategoryDTO = {
       ...category,
       averageProgress,
+      totalPrice,
       tasks,
     };
 

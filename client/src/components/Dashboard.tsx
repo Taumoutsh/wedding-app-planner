@@ -46,6 +46,10 @@ export const Dashboard = () => {
     return Math.round((weightedSum / totalWeight) * 100) / 100;
   };
 
+  const totalBudget = () => {
+    return Math.round(categories.reduce((sum, cat) => sum + (cat.totalPrice || 0), 0) * 100) / 100;
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -75,25 +79,34 @@ export const Dashboard = () => {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-              <span className="text-xs sm:text-sm font-semibold text-pink-100 whitespace-nowrap">{t('dashboard.overallProgress')}</span>
-              <div className="flex items-center gap-2 flex-1">
-                <div className="flex-1 bg-white/30 rounded-full h-2">
-                  <div
-                    className="bg-white h-2 rounded-full transition-all duration-300"
-                    style={{ width: `${overallProgress()}%` }}
-                  />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-4">
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <span className="text-xs sm:text-sm font-semibold text-pink-100 whitespace-nowrap">{t('dashboard.overallProgress')}</span>
+                <div className="flex items-center gap-2 flex-1">
+                  <div className="flex-1 bg-white/30 rounded-full h-2">
+                    <div
+                      className="bg-white h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${overallProgress()}%` }}
+                    />
+                  </div>
+                  <span className="text-xs sm:text-sm font-bold text-white min-w-[3.5rem]">
+                    {overallProgress().toFixed(1)}%
+                  </span>
                 </div>
-                <span className="text-xs sm:text-sm font-bold text-white min-w-[3.5rem]">
-                  {overallProgress().toFixed(1)}%
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="text-xs sm:text-sm font-semibold text-pink-100 whitespace-nowrap">{t('dashboard.totalBudget')}</span>
+                <span className="text-xs sm:text-sm font-bold text-white">
+                  {totalBudget().toFixed(2)}€
                 </span>
               </div>
             </div>
 
             <button
               onClick={() => setShowCategoryModal(true)}
-              className="px-4 py-2 bg-white text-pink-600 hover:bg-pink-50 rounded-md transition text-sm sm:text-base font-semibold shadow-md"
+              className="px-4 py-2 bg-white text-pink-600 hover:bg-pink-50 rounded-md transition text-sm sm:text-base font-semibold shadow-md h-fit sm:h-auto"
             >
               <span className="hidden sm:inline">{t('dashboard.addCategory')}</span>
               <span className="inline sm:hidden">{t('dashboard.addCategoryMobile')}</span>
