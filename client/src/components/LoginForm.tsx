@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { authApi } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import { useTranslation } from '../i18n/useTranslation';
 
 export const LoginForm = () => {
   const [username, setUsername] = useState('');
@@ -8,6 +9,7 @@ export const LoginForm = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
+  const { t } = useTranslation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,7 +20,7 @@ export const LoginForm = () => {
       const response = await authApi.login({ username, password });
       login(response.data.token, response.data.user);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Login failed');
+      setError(err.response?.data?.message || t('loginForm.loginFailed'));
     } finally {
       setLoading(false);
     }
@@ -28,9 +30,9 @@ export const LoginForm = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-100 to-purple-100 px-4">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <h1 className="text-3xl font-bold text-center mb-2 text-gray-800">
-          Wedding Planner
+          {t('loginForm.heading')}
         </h1>
-        <p className="text-center text-gray-600 mb-8">Sign in to continue</p>
+        <p className="text-center text-gray-600 mb-8">{t('loginForm.subheading')}</p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
@@ -41,7 +43,7 @@ export const LoginForm = () => {
 
           <div>
             <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
-              Username
+              {t('loginForm.username')}
             </label>
             <input
               id="username"
@@ -56,7 +58,7 @@ export const LoginForm = () => {
 
           <div>
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-              Password
+              {t('loginForm.password')}
             </label>
             <input
               id="password"
@@ -73,7 +75,7 @@ export const LoginForm = () => {
             disabled={loading}
             className="w-full bg-pink-500 text-white py-2 px-4 rounded-md hover:bg-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition"
           >
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? t('loginForm.signingIn') : t('loginForm.signIn')}
           </button>
         </form>
       </div>

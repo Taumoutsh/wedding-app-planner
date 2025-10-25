@@ -1,4 +1,5 @@
 import { Modal } from './Modal';
+import { useTranslation } from '../i18n/useTranslation';
 
 interface ConfirmDialogProps {
   isOpen: boolean;
@@ -16,9 +17,12 @@ export const ConfirmDialog = ({
   onConfirm,
   title,
   message,
-  confirmText = 'Delete',
-  cancelText = 'Cancel',
+  confirmText,
+  cancelText,
 }: ConfirmDialogProps) => {
+  const { t } = useTranslation();
+  const defaultConfirmText = confirmText || t('confirmDialog.delete');
+  const defaultCancelText = cancelText || t('confirmDialog.cancel');
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title}>
       <p className="text-gray-600 mb-6">{message}</p>
@@ -28,7 +32,7 @@ export const ConfirmDialog = ({
           onClick={onClose}
           className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition"
         >
-          {cancelText}
+          {defaultCancelText}
         </button>
         <button
           onClick={() => {
@@ -37,7 +41,7 @@ export const ConfirmDialog = ({
           }}
           className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
         >
-          {confirmText}
+          {defaultConfirmText}
         </button>
       </div>
     </Modal>

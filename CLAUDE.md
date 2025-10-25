@@ -79,3 +79,56 @@ subtask 1 comment   Subtask 1 percentage   Subtask weight
   - The modification date (calculated automatically by the application)
   - The user's name (calculated automatically by the application)
   - The average calculations for categories and main tasks (calculated automatically)
+
+## Internationalization (i18n)
+- The application supports multiple languages: French (FR) and English (EN)
+- **Default language: French**
+- Language preference is persisted in localStorage
+- A language switcher is available in the bottom-right corner of the application
+- Translation files are located in `client/src/i18n/`
+
+### Adding New Translations
+When implementing a new feature, always add translations for both languages:
+
+1. **Add the translation key to both language objects** in `client/src/i18n/translations.ts`:
+   ```typescript
+   en: {
+     featureName: {
+       label: 'English text',
+     }
+   },
+   fr: {
+     featureName: {
+       label: 'Texte en français',
+     }
+   }
+   ```
+
+2. **Use the `useTranslation()` hook in components**:
+   ```typescript
+   import { useTranslation } from '@/i18n/useTranslation';
+
+   export function MyComponent() {
+     const { t } = useTranslation();
+     return <button>{t('featureName.label')}</button>;
+   }
+   ```
+
+3. **For dynamic text with variables**, use the variables parameter:
+   ```typescript
+   const { t } = useTranslation();
+   const message = t('dashboard.welcome', { username: user.name });
+   // Will replace {username} with the actual value
+   ```
+
+### Translation Structure
+Translations are organized by component/feature:
+- `loginForm` - Login form translations
+- `dashboard` - Dashboard and main page translations
+- `categoryCard` - Category card UI and dialogs
+- `categoryFormModal` - Category creation/edit modal
+- `taskCard` - Task card UI and dialogs
+- `taskFormModal` - Task creation/edit modal
+- `subtaskFormModal` - Subtask creation/edit modal
+- `subtaskItem` - Subtask item display and dialogs
+- `confirmDialog` - Confirmation dialog translations

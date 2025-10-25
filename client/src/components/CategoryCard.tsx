@@ -5,6 +5,7 @@ import { TaskCard } from './TaskCard';
 import { CategoryFormModal } from './CategoryFormModal';
 import { TaskFormModal } from './TaskFormModal';
 import { ConfirmDialog } from './ConfirmDialog';
+import { useTranslation } from '../i18n/useTranslation';
 
 interface CategoryCardProps {
   category: CategoryDTO;
@@ -12,6 +13,7 @@ interface CategoryCardProps {
 }
 
 export const CategoryCard = ({ category, onUpdate }: CategoryCardProps) => {
+  const { t } = useTranslation();
   const [showEditModal, setShowEditModal] = useState(false);
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -51,7 +53,7 @@ export const CategoryCard = ({ category, onUpdate }: CategoryCardProps) => {
               <button
                 onClick={() => setShowEditModal(true)}
                 className="p-2 text-white hover:bg-white/20 rounded transition"
-                title="Edit category"
+                title={t('categoryCard.editCategory')}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -60,7 +62,7 @@ export const CategoryCard = ({ category, onUpdate }: CategoryCardProps) => {
               <button
                 onClick={() => setShowDeleteDialog(true)}
                 className="p-2 text-white hover:bg-white/20 rounded transition"
-                title="Delete category"
+                title={t('categoryCard.deleteCategory')}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -73,12 +75,12 @@ export const CategoryCard = ({ category, onUpdate }: CategoryCardProps) => {
         <div className="p-4">
           {!category.tasks || category.tasks.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-500 mb-3">No tasks yet</p>
+              <p className="text-gray-500 mb-3">{t('categoryCard.noTasks')}</p>
               <button
                 onClick={() => setShowTaskModal(true)}
                 className="px-4 py-2 bg-pink-500 text-white rounded-md hover:bg-pink-600 transition text-sm"
               >
-                + Add Task
+                {t('categoryCard.addTask')}
               </button>
             </div>
           ) : (
@@ -92,7 +94,7 @@ export const CategoryCard = ({ category, onUpdate }: CategoryCardProps) => {
                 onClick={() => setShowTaskModal(true)}
                 className="w-full px-4 py-2 border-2 border-dashed border-gray-300 text-gray-600 rounded-md hover:border-pink-500 hover:text-pink-500 transition"
               >
-                + Add Task
+                {t('categoryCard.addTask')}
               </button>
             </>
           )}
@@ -117,8 +119,8 @@ export const CategoryCard = ({ category, onUpdate }: CategoryCardProps) => {
         isOpen={showDeleteDialog}
         onClose={() => setShowDeleteDialog(false)}
         onConfirm={handleDelete}
-        title="Delete Category"
-        message={`Are you sure you want to delete "${category.name}"? This will also delete all tasks and subtasks within this category.`}
+        title={t('categoryCard.deleteTitle')}
+        message={t('categoryCard.deleteMessage', { name: category.name })}
       />
     </>
   );

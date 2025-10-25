@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { categoryApi } from '../services/api';
+import { useTranslation } from '../i18n/useTranslation';
 import type { CategoryDTO } from '@wedding-planner/shared';
 import { CategoryCard } from './CategoryCard';
 import { CategoryFormModal } from './CategoryFormModal';
 
 export const Dashboard = () => {
   const { user, logout } = useAuth();
+  const { t } = useTranslation();
   const [categories, setCategories] = useState<CategoryDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
@@ -47,7 +49,7 @@ export const Dashboard = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-xl text-gray-600">Loading...</div>
+        <div className="text-xl text-gray-600">{t('dashboard.loading')}</div>
       </div>
     );
   }
@@ -59,21 +61,23 @@ export const Dashboard = () => {
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-                Wedding Planner
+                {t('dashboard.heading')}
               </h1>
-              <p className="text-sm text-gray-600 mt-1">Welcome, {user?.username}</p>
+              <p className="text-sm text-gray-600 mt-1">
+                {t('dashboard.welcome', { username: user?.username || '' })}
+              </p>
             </div>
             <button
               onClick={logout}
               className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900 border border-gray-300 rounded-md hover:bg-gray-50 transition"
             >
-              Logout
+              {t('dashboard.logout')}
             </button>
           </div>
 
           <div className="mt-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <span className="text-sm font-medium text-gray-700">Overall Progress:</span>
+              <span className="text-sm font-medium text-gray-700">{t('dashboard.overallProgress')}</span>
               <div className="flex items-center gap-2">
                 <div className="w-32 bg-gray-200 rounded-full h-2.5">
                   <div
@@ -91,7 +95,7 @@ export const Dashboard = () => {
               onClick={() => setShowCategoryModal(true)}
               className="px-4 py-2 bg-pink-500 text-white rounded-md hover:bg-pink-600 transition text-sm sm:text-base"
             >
-              + Add Category
+              {t('dashboard.addCategory')}
             </button>
           </div>
         </div>
@@ -100,12 +104,12 @@ export const Dashboard = () => {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {categories.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-gray-600 mb-4">No categories yet. Create your first one!</p>
+            <p className="text-gray-600 mb-4">{t('dashboard.noCategoriesEmpty')}</p>
             <button
               onClick={() => setShowCategoryModal(true)}
               className="px-6 py-3 bg-pink-500 text-white rounded-md hover:bg-pink-600 transition"
             >
-              + Create Category
+              {t('dashboard.createCategory')}
             </button>
           </div>
         ) : (

@@ -5,6 +5,7 @@ import { SubtaskItem } from './SubtaskItem';
 import { TaskFormModal } from './TaskFormModal';
 import { SubtaskFormModal } from './SubtaskFormModal';
 import { ConfirmDialog } from './ConfirmDialog';
+import { useTranslation } from '../i18n/useTranslation';
 
 interface TaskCardProps {
   task: TaskDTO;
@@ -12,6 +13,7 @@ interface TaskCardProps {
 }
 
 export const TaskCard = ({ task, onUpdate }: TaskCardProps) => {
+  const { t } = useTranslation();
   const [showEditModal, setShowEditModal] = useState(false);
   const [showSubtaskModal, setShowSubtaskModal] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -73,7 +75,7 @@ export const TaskCard = ({ task, onUpdate }: TaskCardProps) => {
             <button
               onClick={() => setShowEditModal(true)}
               className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition"
-              title="Edit task"
+              title={t('taskCard.editTask')}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -82,7 +84,7 @@ export const TaskCard = ({ task, onUpdate }: TaskCardProps) => {
             <button
               onClick={() => setShowDeleteDialog(true)}
               className="p-1.5 text-gray-500 hover:text-red-600 hover:bg-gray-100 rounded transition"
-              title="Delete task"
+              title={t('taskCard.deleteTask')}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -111,7 +113,7 @@ export const TaskCard = ({ task, onUpdate }: TaskCardProps) => {
               <SubtaskItem key={subtask.id} subtask={subtask} onUpdate={onUpdate} />
             ))
           ) : (
-            <p className="text-xs text-gray-500 text-center py-2">No subtasks yet</p>
+            <p className="text-xs text-gray-500 text-center py-2">{t('taskCard.noSubtasks')}</p>
           )}
         </div>
 
@@ -119,7 +121,7 @@ export const TaskCard = ({ task, onUpdate }: TaskCardProps) => {
           onClick={() => setShowSubtaskModal(true)}
           className="w-full mt-3 px-3 py-1.5 border border-dashed border-gray-300 text-gray-600 rounded text-sm hover:border-pink-500 hover:text-pink-500 transition"
         >
-          + Add Subtask
+          {t('taskCard.addSubtask')}
         </button>
       </div>
 
@@ -142,8 +144,8 @@ export const TaskCard = ({ task, onUpdate }: TaskCardProps) => {
         isOpen={showDeleteDialog}
         onClose={() => setShowDeleteDialog(false)}
         onConfirm={handleDelete}
-        title="Delete Task"
-        message={`Are you sure you want to delete "${task.title}"? This will also delete all subtasks within this task.`}
+        title={t('taskCard.deleteTitle')}
+        message={t('taskCard.deleteMessage', { title: task.title })}
       />
     </>
   );

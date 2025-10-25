@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Modal } from './Modal';
 import { taskApi } from '../services/api';
+import { useTranslation } from '../i18n/useTranslation';
 import type { TaskDTO } from '@wedding-planner/shared';
 
 interface TaskFormModalProps {
@@ -18,6 +19,7 @@ export const TaskFormModal = ({
   categoryId,
   task,
 }: TaskFormModalProps) => {
+  const { t } = useTranslation();
   const [title, setTitle] = useState('');
   const [comment, setComment] = useState('');
   const [loading, setLoading] = useState(false);
@@ -50,7 +52,7 @@ export const TaskFormModal = ({
       setTitle('');
       setComment('');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to save task');
+      setError(err.response?.data?.message || t('taskFormModal.saveFailed'));
     } finally {
       setLoading(false);
     }
@@ -60,7 +62,7 @@ export const TaskFormModal = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={task ? 'Edit Task' : 'Create Task'}
+      title={task ? t('taskFormModal.editTitle') : t('taskFormModal.createTitle')}
     >
       <form onSubmit={handleSubmit}>
         {error && (
@@ -71,7 +73,7 @@ export const TaskFormModal = ({
 
         <div className="mb-4">
           <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-            Task Title
+            {t('taskFormModal.taskTitle')}
           </label>
           <input
             id="title"
@@ -86,7 +88,7 @@ export const TaskFormModal = ({
 
         <div className="mb-4">
           <label htmlFor="comment" className="block text-sm font-medium text-gray-700 mb-1">
-            Comment
+            {t('taskFormModal.comment')}
           </label>
           <textarea
             id="comment"
@@ -104,14 +106,14 @@ export const TaskFormModal = ({
             className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition"
             disabled={loading}
           >
-            Cancel
+            {t('taskFormModal.cancel')}
           </button>
           <button
             type="submit"
             className="px-4 py-2 bg-pink-500 text-white rounded-md hover:bg-pink-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={loading}
           >
-            {loading ? 'Saving...' : task ? 'Update' : 'Create'}
+            {loading ? t('taskFormModal.saving') : task ? t('taskFormModal.update') : t('taskFormModal.create')}
           </button>
         </div>
       </form>

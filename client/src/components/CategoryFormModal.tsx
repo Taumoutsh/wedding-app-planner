@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Modal } from './Modal';
 import { categoryApi } from '../services/api';
+import { useTranslation } from '../i18n/useTranslation';
 import type { CategoryDTO } from '@wedding-planner/shared';
 
 interface CategoryFormModalProps {
@@ -16,6 +17,7 @@ export const CategoryFormModal = ({
   onSuccess,
   category,
 }: CategoryFormModalProps) => {
+  const { t } = useTranslation();
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -44,7 +46,7 @@ export const CategoryFormModal = ({
       onClose();
       setName('');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to save category');
+      setError(err.response?.data?.message || t('categoryFormModal.saveFailed'));
     } finally {
       setLoading(false);
     }
@@ -54,7 +56,7 @@ export const CategoryFormModal = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={category ? 'Edit Category' : 'Create Category'}
+      title={category ? t('categoryFormModal.editTitle') : t('categoryFormModal.createTitle')}
     >
       <form onSubmit={handleSubmit}>
         {error && (
@@ -65,7 +67,7 @@ export const CategoryFormModal = ({
 
         <div className="mb-4">
           <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-            Category Name
+            {t('categoryFormModal.categoryName')}
           </label>
           <input
             id="name"
@@ -85,14 +87,14 @@ export const CategoryFormModal = ({
             className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition"
             disabled={loading}
           >
-            Cancel
+            {t('categoryFormModal.cancel')}
           </button>
           <button
             type="submit"
             className="px-4 py-2 bg-pink-500 text-white rounded-md hover:bg-pink-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={loading}
           >
-            {loading ? 'Saving...' : category ? 'Update' : 'Create'}
+            {loading ? t('categoryFormModal.saving') : category ? t('categoryFormModal.update') : t('categoryFormModal.create')}
           </button>
         </div>
       </form>

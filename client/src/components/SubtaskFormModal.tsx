@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Modal } from './Modal';
 import { subtaskApi } from '../services/api';
+import { useTranslation } from '../i18n/useTranslation';
 import type { SubtaskDTO } from '@wedding-planner/shared';
 
 interface SubtaskFormModalProps {
@@ -18,6 +19,7 @@ export const SubtaskFormModal = ({
   taskId,
   subtask,
 }: SubtaskFormModalProps) => {
+  const { t } = useTranslation();
   const [title, setTitle] = useState('');
   const [comment, setComment] = useState('');
   const [date, setDate] = useState('');
@@ -65,7 +67,7 @@ export const SubtaskFormModal = ({
       onSuccess();
       onClose();
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to save subtask');
+      setError(err.response?.data?.message || t('subtaskFormModal.saveFailed'));
     } finally {
       setLoading(false);
     }
@@ -75,7 +77,7 @@ export const SubtaskFormModal = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={subtask ? 'Edit Subtask' : 'Create Subtask'}
+      title={subtask ? t('subtaskFormModal.editTitle') : t('subtaskFormModal.createTitle')}
     >
       <form onSubmit={handleSubmit}>
         {error && (
@@ -86,7 +88,7 @@ export const SubtaskFormModal = ({
 
         <div className="mb-4">
           <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-            Subtask Title
+            {t('subtaskFormModal.subtaskTitle')}
           </label>
           <input
             id="title"
@@ -101,7 +103,7 @@ export const SubtaskFormModal = ({
 
         <div className="mb-4">
           <label htmlFor="comment" className="block text-sm font-medium text-gray-700 mb-1">
-            Comment
+            {t('subtaskFormModal.comment')}
           </label>
           <textarea
             id="comment"
@@ -114,7 +116,7 @@ export const SubtaskFormModal = ({
 
         <div className="mb-4">
           <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
-            Date (Optional)
+            {t('subtaskFormModal.dateLabel')}
           </label>
           <div className="relative">
             <input
@@ -129,7 +131,7 @@ export const SubtaskFormModal = ({
                 type="button"
                 onClick={() => setDate('')}
                 className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-600 transition p-1"
-                title="Clear date"
+                title={t('subtaskFormModal.clearDate')}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -142,7 +144,7 @@ export const SubtaskFormModal = ({
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
             <label htmlFor="progress" className="block text-sm font-medium text-gray-700 mb-1">
-              Progress (%)
+              {t('subtaskFormModal.progress')}
             </label>
             <input
               id="progress"
@@ -158,7 +160,7 @@ export const SubtaskFormModal = ({
 
           <div>
             <label htmlFor="weight" className="block text-sm font-medium text-gray-700 mb-1">
-              Weight
+              {t('subtaskFormModal.weight')}
             </label>
             <input
               id="weight"
@@ -179,14 +181,14 @@ export const SubtaskFormModal = ({
             className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition"
             disabled={loading}
           >
-            Cancel
+            {t('subtaskFormModal.cancel')}
           </button>
           <button
             type="submit"
             className="px-4 py-2 bg-pink-500 text-white rounded-md hover:bg-pink-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={loading}
           >
-            {loading ? 'Saving...' : subtask ? 'Update' : 'Create'}
+            {loading ? t('subtaskFormModal.saving') : subtask ? t('subtaskFormModal.update') : t('subtaskFormModal.create')}
           </button>
         </div>
       </form>
