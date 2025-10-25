@@ -105,15 +105,15 @@ export const Dashboard = () => {
           )}
 
           {/* Stats section - grid layout changes based on scroll state */}
-          <div className={`grid items-center ${isScrolled ? 'grid-cols-3 sm:grid-cols-4 gap-2' : 'grid-cols-1 sm:grid-cols-3 gap-4'}`}>
+          <div className={`grid items-center ${isScrolled ? 'grid-cols-3 gap-1 sm:grid-cols-4 sm:gap-2' : 'grid-cols-1 sm:grid-cols-3 gap-4'}`}>
             {/* Progress section */}
-            <div className={`col-span-2 sm:col-span-1 flex ${isScrolled ? 'flex-col gap-1' : 'flex-col gap-3'}`}>
-              <div className={`flex ${isScrolled ? 'flex-col gap-1' : 'flex-col sm:flex-row sm:items-center gap-2'}`}>
+            <div className={`flex ${isScrolled ? 'col-span-1' : 'col-span-2 sm:col-span-1'} ${isScrolled ? 'gap-1' : 'flex-col gap-3'}`}>
+              <div className={`flex ${isScrolled ? 'items-center gap-1' : 'flex-col sm:flex-row sm:items-center gap-2'} min-w-0`}>
                 <span className={`font-semibold text-pink-100 whitespace-nowrap ${isScrolled ? 'text-xs hidden sm:inline' : 'text-xs sm:text-sm'}`}>
                   {t('dashboard.overallProgress')}
                 </span>
-                <div className="flex items-center gap-2 flex-1">
-                  <div className="flex-1 bg-white/30 rounded-full h-2">
+                <div className={`flex items-center ${isScrolled ? 'gap-1' : 'gap-2'} flex-1 min-w-0`}>
+                  <div className="flex-1 bg-white/30 rounded-full h-2 min-w-0">
                     <div
                       className="bg-white h-2 rounded-full transition-all duration-300"
                       style={{ width: `${overallProgress()}%` }}
@@ -127,11 +127,11 @@ export const Dashboard = () => {
             </div>
 
             {/* Budget - always visible, shown on all states */}
-            <div className={`flex col-span-1 items-center gap-2`}>
+            <div className={`flex col-span-1 items-center gap-1 sm:gap-2 min-w-0`}>
               <span className={`font-semibold text-pink-100 whitespace-nowrap ${isScrolled ? 'text-xs' : 'text-xs sm:text-sm'}`}>
                 {!isScrolled && t('dashboard.totalBudget')}
               </span>
-              <span className={`font-bold text-white ${isScrolled ? 'text-xs' : 'text-xs sm:text-sm'}`}>
+              <span className={`font-bold text-white truncate ${isScrolled ? 'text-xs' : 'text-xs sm:text-sm'}`}>
                 {totalBudget().toFixed(2)}€
               </span>
             </div>
@@ -139,7 +139,7 @@ export const Dashboard = () => {
             {/* Add button */}
             <button
               onClick={() => setShowCategoryModal(true)}
-              className={`bg-white text-pink-600 hover:bg-pink-50 rounded-md transition font-semibold shadow-md ${isScrolled ? 'px-2 py-1 text-xs col-span-1' : 'px-4 py-2 text-sm sm:text-base h-fit sm:h-auto col-span-1'}`}
+              className={`bg-white text-pink-600 hover:bg-pink-50 rounded-md transition font-semibold shadow-md col-span-1 ${isScrolled ? 'px-1.5 sm:px-2 py-1 text-xs' : 'px-4 py-2 text-sm sm:text-base h-fit sm:h-auto'}`}
             >
               <span className="hidden sm:inline">{t('dashboard.addCategory')}</span>
               <span className="inline sm:hidden">{isScrolled ? '+' : t('dashboard.addCategoryMobile')}</span>
