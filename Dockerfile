@@ -9,16 +9,16 @@ COPY package.json package-lock.json ./
 COPY client/package.json client/package-lock.json client/
 COPY shared/package.json shared/package-lock.json shared/
 
-# Install dependencies
-RUN npm ci
+# Install dependencies with optimizations
+RUN npm ci --prefer-offline --no-audit
 
-# Copy source code and config files
+# Copy source code
 COPY client client/
 COPY shared shared/
 
-# Build client (TypeScript + Vite)
+# Build client with memory optimization
 WORKDIR /app/client
-RUN npm run build
+RUN NODE_OPTIONS="--max-old-space-size=512" npm run build
 
 # Stage 2: Install production dependencies
 FROM node:22-alpine AS deps-installer
@@ -30,7 +30,7 @@ COPY server/package.json server/package-lock.json server/
 COPY shared/package.json shared/package-lock.json shared/
 
 # Install production dependencies only
-RUN npm ci --omit=dev
+RUN npm ci --omit=dev --prefer-offline --no-audit
 
 # Stage 3: Final production image
 FROM node:22-alpine
