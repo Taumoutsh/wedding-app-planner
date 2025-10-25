@@ -46,14 +46,14 @@ export const SubtaskItem = ({ subtask, onUpdate }: SubtaskItemProps) => {
   return (
     <>
       <div className={`bg-gray-50 rounded p-3 text-xs hover:bg-gray-100 transition ${isPastDue ? 'opacity-50' : ''}`}>
-        <div className="flex items-start gap-2 mb-2">
+        <div className="bg-gray-300 -mx-3 -mt-3 px-3 py-2 rounded-t flex items-start gap-2 mb-2">
           <div className="flex-1">
             <h4 className="font-semibold text-gray-900">{subtask.title}</h4>
           </div>
           <div className="flex gap-1">
             <button
               onClick={() => setShowEditModal(true)}
-              className="p-1 text-gray-500 hover:text-gray-700 rounded transition"
+              className="p-1 text-gray-600 hover:text-gray-900 rounded transition"
               title={t('subtaskItem.editSubtask')}
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -62,7 +62,7 @@ export const SubtaskItem = ({ subtask, onUpdate }: SubtaskItemProps) => {
             </button>
             <button
               onClick={() => setShowDeleteDialog(true)}
-              className="p-1 text-gray-500 hover:text-red-600 rounded transition"
+              className="p-1 text-gray-600 hover:text-red-700 rounded transition"
               title={t('subtaskItem.deleteSubtask')}
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
