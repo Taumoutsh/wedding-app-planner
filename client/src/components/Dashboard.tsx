@@ -12,6 +12,15 @@ export const Dashboard = () => {
   const [categories, setCategories] = useState<CategoryDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const loadCategories = async () => {
     try {
@@ -60,29 +69,48 @@ export const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <header className="bg-gradient-to-r from-pink-500 to-purple-500 shadow-lg sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex justify-between items-start mb-4">
-            <div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">
-                {t('dashboard.heading')}
-              </h1>
-              <p className="text-sm sm:text-base text-pink-100 mt-1">
-                {t('dashboard.welcome', { username: user?.username || '' })}
-              </p>
+      <header className="bg-gradient-to-r from-pink-500 to-purple-500 shadow-lg sticky top-0 z-10 transition-all duration-300">
+        <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-300 ${isScrolled ? 'py-2 sm:py-3' : 'py-6'}`}>
+          {/* Title section - hidden on mobile when scrolled */}
+          {!isScrolled && (
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">
+                  {t('dashboard.heading')}
+                </h1>
+                <p className="text-sm sm:text-base text-pink-100 mt-1">
+                  {t('dashboard.welcome', { username: user?.username || '' })}
+                </p>
+              </div>
+              <button
+                onClick={logout}
+                className="px-3 sm:px-4 py-2 text-xs sm:text-sm text-pink-500 hover:text-pink-700 bg-white hover:bg-pink-50 border border-white rounded-md transition font-medium"
+              >
+                {t('dashboard.logout')}
+              </button>
             </div>
-            <button
-              onClick={logout}
-              className="px-3 sm:px-4 py-2 text-xs sm:text-sm text-pink-500 hover:text-pink-700 bg-white hover:bg-pink-50 border border-white rounded-md transition font-medium"
-            >
-              {t('dashboard.logout')}
-            </button>
-          </div>
+          )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-4">
-            <div className="flex flex-col gap-3">
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <span className="text-xs sm:text-sm font-semibold text-pink-100 whitespace-nowrap">{t('dashboard.overallProgress')}</span>
+          {/* Compact title for scrolled state on mobile */}
+          {isScrolled && (
+            <div className="flex justify-between items-center sm:hidden mb-2">
+              <h1 className="text-lg font-bold text-white">{t('dashboard.heading')}</h1>
+              <button
+                onClick={logout}
+                className="px-2 py-1 text-xs text-pink-500 hover:text-pink-700 bg-white hover:bg-pink-50 border border-white rounded transition font-medium"
+              >
+                {t('dashboard.logout')}
+              </button>
+            </div>
+          )}
+
+          {/* Stats section - always visible but compact when scrolled */}
+          <div className={`grid ${isScrolled ? 'grid-cols-3 gap-2 sm:gap-4' : 'grid-cols-1 sm:grid-cols-2 gap-4'}`}>
+            <div className={`flex ${isScrolled ? 'flex-col gap-1' : 'flex-col gap-3'}`}>
+              <div className={`flex ${isScrolled ? 'flex-col gap-1' : 'flex-col sm:flex-row sm:items-center gap-2'}`}>
+                <span className={`font-semibold text-pink-100 whitespace-nowrap ${isScrolled ? 'text-xs hidden sm:inline' : 'text-xs sm:text-sm'}`}>
+                  {t('dashboard.overallProgress')}
+                </span>
                 <div className="flex items-center gap-2 flex-1">
                   <div className="flex-1 bg-white/30 rounded-full h-2">
                     <div
@@ -90,26 +118,49 @@ export const Dashboard = () => {
                       style={{ width: `${overallProgress()}%` }}
                     />
                   </div>
-                  <span className="text-xs sm:text-sm font-bold text-white min-w-[3.5rem]">
+                  <span className={`font-bold text-white min-w-fit ${isScrolled ? 'text-xs' : 'text-xs sm:text-sm min-w-[3.5rem]'}`}>
                     {overallProgress().toFixed(1)}%
                   </span>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              {!isScrolled && (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs sm:text-sm font-semibold text-pink-100 whitespace-nowrap">{t('dashboard.totalBudget')}</span>
+                  <span className="text-xs sm:text-sm font-bold text-white">
+                    {totalBudget().toFixed(2)}€
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Budget - only visible on desktop or when not scrolled */}
+            {!isScrolled && (
+              <div className="hidden sm:flex items-center gap-2">
                 <span className="text-xs sm:text-sm font-semibold text-pink-100 whitespace-nowrap">{t('dashboard.totalBudget')}</span>
                 <span className="text-xs sm:text-sm font-bold text-white">
                   {totalBudget().toFixed(2)}€
                 </span>
               </div>
-            </div>
+            )}
 
+            {/* Budget compact - only on scrolled mobile */}
+            {isScrolled && (
+              <div className="flex sm:hidden flex-col gap-1">
+                <span className="text-xs font-semibold text-pink-100 text-center hidden">Budget</span>
+                <span className="text-xs font-bold text-white text-center">
+                  {totalBudget().toFixed(2)}€
+                </span>
+              </div>
+            )}
+
+            {/* Add button */}
             <button
               onClick={() => setShowCategoryModal(true)}
-              className="px-4 py-2 bg-white text-pink-600 hover:bg-pink-50 rounded-md transition text-sm sm:text-base font-semibold shadow-md h-fit sm:h-auto"
+              className={`bg-white text-pink-600 hover:bg-pink-50 rounded-md transition font-semibold shadow-md ${isScrolled ? 'px-2 py-1 text-xs' : 'px-4 py-2 text-sm sm:text-base h-fit sm:h-auto'}`}
             >
               <span className="hidden sm:inline">{t('dashboard.addCategory')}</span>
-              <span className="inline sm:hidden">{t('dashboard.addCategoryMobile')}</span>
+              <span className="inline sm:hidden">{isScrolled ? '+' : t('dashboard.addCategoryMobile')}</span>
             </button>
           </div>
         </div>
