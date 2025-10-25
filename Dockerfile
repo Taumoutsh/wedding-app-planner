@@ -59,6 +59,9 @@ RUN npm ci --omit=dev --verbose
 FROM node:22-alpine
 WORKDIR /app
 
+# Install OpenSSL required by Prisma
+RUN apk add --no-cache openssl
+
 # Set environment
 ENV NODE_ENV=production
 ENV PORT=6001
@@ -86,7 +89,7 @@ RUN echo '#!/bin/sh' > /app/start.sh && \
     echo 'set -e' >> /app/start.sh && \
     echo 'cd /app/server' >> /app/start.sh && \
     echo 'echo "Running database migrations..."' >> /app/start.sh && \
-    echo 'npx prisma migrate deploy --skip-generate' >> /app/start.sh && \
+    echo 'npx prisma migrate deploy' >> /app/start.sh && \
     echo 'echo "Starting server..."' >> /app/start.sh && \
     echo 'npm start' >> /app/start.sh && \
     chmod +x /app/start.sh
