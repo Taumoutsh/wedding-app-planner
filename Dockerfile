@@ -12,11 +12,11 @@ COPY shared/package.json shared/package-lock.json shared/
 # Install dependencies
 RUN npm ci
 
-# Copy source code
+# Copy source code and config files
 COPY client client/
 COPY shared shared/
 
-# Build client
+# Build client (TypeScript + Vite)
 WORKDIR /app/client
 RUN npm run build
 

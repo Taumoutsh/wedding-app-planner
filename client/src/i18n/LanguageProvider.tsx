@@ -17,11 +17,6 @@ export function LanguageProvider({ children }: LanguageProviderProps) {
     }
   }, []);
 
-  const changeLanguage = (newLanguage: Language) => {
-    setLanguage(newLanguage);
-    localStorage.setItem('language', newLanguage);
-  };
-
   return (
     <LanguageContext.Provider value={language}>
       {children}

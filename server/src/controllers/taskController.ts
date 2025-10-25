@@ -2,7 +2,7 @@ import { Response } from 'express';
 import { prisma } from '../utils/db';
 import { AuthRequest } from '../middleware/auth';
 import { CreateTaskRequest, UpdateTaskRequest, TaskDTO } from '@wedding-planner/shared';
-import { calculateWeightedAverage } from '../utils/calculations';
+import { calculateWeightedAverage, calculateTotalPrice } from '../utils/calculations';
 
 export const createTask = async (req: AuthRequest, res: Response) => {
   try {
@@ -36,6 +36,7 @@ export const createTask = async (req: AuthRequest, res: Response) => {
     const taskWithProgress: TaskDTO = {
       ...task,
       averageProgress: 0,
+      totalPrice: 0,
       subtasks: [],
     };
 
@@ -75,6 +76,7 @@ export const updateTask = async (req: AuthRequest, res: Response) => {
     const taskWithProgress: TaskDTO = {
       ...task,
       averageProgress: calculateWeightedAverage(task.subtasks),
+      totalPrice: calculateTotalPrice(task.subtasks),
       subtasks: task.subtasks,
     };
 
