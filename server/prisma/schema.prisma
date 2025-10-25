@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+
+  @@map("users")
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tasks     Task[]
+
+  @@map("categories")
+}
+
+model Task {
+  id         Int       @id @default(autoincrement())
+  categoryId Int
+  title      String
+  comment    String    @default("")
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  category   Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  subtasks   Subtask[]
+
+  @@map("tasks")
+}
+
+model Subtask {
+  id                 Int      @id @default(autoincrement())
+  taskId             Int
+  title              String
+  comment            String   @default("")
+  date               DateTime
+  createdBy          String
+  progressPercentage Int      @default(0)
+  weight             Int      @default(1)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  task               Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@map("subtasks")
+}
