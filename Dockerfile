@@ -4,33 +4,33 @@
 FROM node:22-alpine AS client-builder
 WORKDIR /app
 
-# Copy package files
+# Copy ALL package files (with lock files for reproducibility)
 COPY package.json package-lock.json ./
 COPY client/package.json client/package-lock.json client/
 COPY shared/package.json shared/package-lock.json shared/
 
-# Install dependencies with optimizations
-RUN npm ci --prefer-offline --no-audit
+# Install all dependencies (including dev deps for build)
+RUN npm ci --verbose
 
 # Copy source code
 COPY client client/
 COPY shared shared/
 
-# Build client with memory optimization
+# Build client with explicit memory settings
 WORKDIR /app/client
-RUN NODE_OPTIONS="--max-old-space-size=512" npm run build
+RUN NODE_OPTIONS="--max-old-space-size=768" npm run build
 
 # Stage 2: Install production dependencies
 FROM node:22-alpine AS deps-installer
 WORKDIR /app
 
-# Copy package files
+# Copy ALL package files
 COPY package.json package-lock.json ./
 COPY server/package.json server/package-lock.json server/
 COPY shared/package.json shared/package-lock.json shared/
 
 # Install production dependencies only
-RUN npm ci --omit=dev --prefer-offline --no-audit
+RUN npm ci --omit=dev --verbose
 
 # Stage 3: Final production image
 FROM node:22-alpine
@@ -41,8 +41,8 @@ ENV NODE_ENV=production
 ENV PORT=6001
 
 # Copy package files
-COPY package.json package-lock.json ./
-COPY server/package.json server/package-lock.json server/
+COPY package.json ./
+COPY server/package.json server/
 
 # Copy production dependencies from installer stage
 COPY --from=deps-installer /app/node_modules node_modules
