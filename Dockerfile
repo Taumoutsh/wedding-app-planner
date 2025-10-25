@@ -1,7 +1,7 @@
 # Multi-stage build for Wedding Planner App
 
 # Stage 1: Build React frontend
-FROM node:18-alpine AS client-builder
+FROM node:22-alpine AS client-builder
 WORKDIR /app
 
 # Copy package files
@@ -21,7 +21,7 @@ WORKDIR /app/client
 RUN npm run build
 
 # Stage 2: Install production dependencies
-FROM node:18-alpine AS deps-installer
+FROM node:22-alpine AS deps-installer
 WORKDIR /app
 
 # Copy package files
@@ -33,7 +33,7 @@ COPY shared/package.json shared/package-lock.json shared/
 RUN npm ci --omit=dev
 
 # Stage 3: Final production image
-FROM node:18-alpine
+FROM node:22-alpine
 WORKDIR /app
 
 # Set environment
