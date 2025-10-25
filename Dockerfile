@@ -81,6 +81,16 @@ COPY server/tsconfig.json server/tsconfig.json
 # Copy Prisma schema and migrations
 COPY server/prisma server/prisma
 
+# Create a startup script
+RUN echo '#!/bin/sh' > /app/start.sh && \
+    echo 'set -e' >> /app/start.sh && \
+    echo 'cd /app/server' >> /app/start.sh && \
+    echo 'echo "Running database migrations..."' >> /app/start.sh && \
+    echo 'npx prisma migrate deploy --skip-generate' >> /app/start.sh && \
+    echo 'echo "Starting server..."' >> /app/start.sh && \
+    echo 'npm start' >> /app/start.sh && \
+    chmod +x /app/start.sh
+
 # Expose port
 EXPOSE 6001
 
@@ -88,5 +98,5 @@ EXPOSE 6001
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
   CMD node -e "require('http').get('http://localhost:6001/', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)}).on('error', (e) => {throw e})"
 
-# Start server - no need for dumb-init with node:18-alpine as PID 1
-CMD ["sh", "-c", "cd server && npx prisma migrate deploy && npm start"]
+# Start server
+CMD ["/app/start.sh"]
