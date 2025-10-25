@@ -46,7 +46,7 @@ export const SubtaskItem = ({ subtask, onUpdate }: SubtaskItemProps) => {
   return (
     <>
       <div className={`bg-gray-50 rounded p-3 text-xs hover:bg-gray-100 transition ${isPastDue ? 'opacity-50' : ''}`}>
-        <div className="bg-gray-300 -mx-3 -mt-3 px-3 py-2 rounded-t flex items-start gap-2 mb-2">
+        <div className="bg-gray-200 -mx-3 -mt-3 px-3 py-2 rounded-t flex items-start gap-2 mb-2">
           <div className="flex-1">
             <h4 className="font-semibold text-gray-900">{subtask.title}</h4>
           </div>
