@@ -89,8 +89,9 @@ RUN echo '#!/bin/sh' > /app/start.sh && \
     echo 'set -e' >> /app/start.sh && \
     echo 'cd /app/server' >> /app/start.sh && \
     echo 'echo "Running database migrations..."' >> /app/start.sh && \
-    echo 'npx prisma migrate deploy --schema=./prisma/schema.prisma' >> /app/start.sh && \
-    echo 'echo "Starting server..."' >> /app/start.sh && \
+    echo 'npx prisma migrate deploy --schema=/app/server/prisma/schema.prisma' >> /app/start.sh && \
+    echo 'echo "Migrations completed!"' >> /app/start.sh && \
+    echo 'echo "Starting server on port 6001..."' >> /app/start.sh && \
     echo 'npm start' >> /app/start.sh && \
     chmod +x /app/start.sh
 
