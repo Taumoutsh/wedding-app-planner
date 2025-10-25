@@ -4,10 +4,11 @@
 FROM node:22-alpine AS client-builder
 WORKDIR /app
 
-# Copy ALL package files (with lock files for reproducibility)
+# Copy monorepo package files (npm workspaces - single lock file at root)
 COPY package.json package-lock.json ./
-COPY client/package.json client/package-lock.json client/
-COPY shared/package.json shared/package-lock.json shared/
+COPY client/package.json client/
+COPY server/package.json server/
+COPY shared/package.json shared/
 
 # Install all dependencies (including dev deps for build)
 RUN npm ci --verbose
@@ -24,10 +25,10 @@ RUN NODE_OPTIONS="--max-old-space-size=768" npm run build
 FROM node:22-alpine AS deps-installer
 WORKDIR /app
 
-# Copy ALL package files
+# Copy monorepo package files (npm workspaces - single lock file at root)
 COPY package.json package-lock.json ./
-COPY server/package.json server/package-lock.json server/
-COPY shared/package.json shared/package-lock.json shared/
+COPY server/package.json server/
+COPY shared/package.json shared/
 
 # Install production dependencies only
 RUN npm ci --omit=dev --verbose
