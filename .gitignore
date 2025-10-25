@@ -8,3 +8,9 @@ build
 coverage
 .vscode
 .idea
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+server/prisma/dev.db
