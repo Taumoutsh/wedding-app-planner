@@ -1,10 +1,28 @@
 # Multi-stage build for Wedding Planner App
 
-# Stage 1: Build React frontend
-FROM node:22-alpine AS client-builder
+# Stage 1: Build shared types library
+FROM node:22-alpine AS shared-builder
 WORKDIR /app
 
 # Copy monorepo package files (npm workspaces - single lock file at root)
+COPY package.json package-lock.json ./
+COPY shared/package.json shared/
+
+# Install dependencies
+RUN npm ci --verbose
+
+# Copy shared source code
+COPY shared shared/
+
+# Build shared library
+WORKDIR /app/shared
+RUN npm run build
+
+# Stage 2: Build React frontend
+FROM node:22-alpine AS client-builder
+WORKDIR /app
+
+# Copy monorepo package files
 COPY package.json package-lock.json ./
 COPY client/package.json client/
 COPY server/package.json server/
@@ -17,11 +35,15 @@ RUN npm ci --verbose
 COPY client client/
 COPY shared shared/
 
+# Copy built shared from previous stage
+COPY --from=shared-builder /app/shared/dist shared/dist
+COPY --from=shared-builder /app/shared/package.json shared/
+
 # Build client with explicit memory settings
 WORKDIR /app/client
 RUN NODE_OPTIONS="--max-old-space-size=768" npm run build
 
-# Stage 2: Install production dependencies
+# Stage 3: Install production dependencies
 FROM node:22-alpine AS deps-installer
 WORKDIR /app
 
@@ -33,7 +55,7 @@ COPY shared/package.json shared/
 # Install production dependencies only
 RUN npm ci --omit=dev --verbose
 
-# Stage 3: Final production image
+# Stage 4: Final production image
 FROM node:22-alpine
 WORKDIR /app
 
