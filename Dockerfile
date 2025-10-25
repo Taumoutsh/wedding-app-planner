@@ -62,6 +62,10 @@ WORKDIR /app
 # Install OpenSSL required by Prisma
 RUN apk add --no-cache openssl
 
+# Create non-root user for security
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S nodejs -u 1001
+
 # Set environment
 ENV NODE_ENV=production
 ENV PORT=6001
@@ -94,6 +98,12 @@ RUN echo '#!/bin/sh' > /app/start.sh && \
     echo 'echo "Starting server on port 6001..."' >> /app/start.sh && \
     echo 'npm start' >> /app/start.sh && \
     chmod +x /app/start.sh
+
+# Set correct permissions for the non-root user
+RUN chown -R nodejs:nodejs /app
+
+# Switch to non-root user
+USER nodejs
 
 # Expose port
 EXPOSE 6001
