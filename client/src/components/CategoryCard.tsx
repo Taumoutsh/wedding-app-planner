@@ -36,7 +36,7 @@ export const CategoryCard = ({ category, onUpdate }: CategoryCardProps) => {
               <h2 className="text-xl sm:text-2xl font-bold text-white">
                 {category.name}
               </h2>
-              <div className="mt-2 flex items-center gap-2">
+              <div className="mt-2 flex items-center gap-2 mb-2">
                 <div className="w-48 bg-white/30 rounded-full h-2">
                   <div
                     className="bg-white h-2 rounded-full transition-all duration-300"
@@ -47,6 +47,14 @@ export const CategoryCard = ({ category, onUpdate }: CategoryCardProps) => {
                   {category.averageProgress.toFixed(1)}%
                 </span>
               </div>
+              {category.totalPrice > 0 && (
+                <div className="flex items-center gap-1.5 text-sm">
+                  <span className="text-white/80">💰</span>
+                  <span className="font-semibold text-white">
+                    {category.totalPrice.toFixed(2)}€
+                  </span>
+                </div>
+              )}
             </div>
 
             <div className="flex gap-2">

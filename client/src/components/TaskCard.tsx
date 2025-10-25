@@ -94,7 +94,7 @@ export const TaskCard = ({ task, onUpdate }: TaskCardProps) => {
         </div>
 
         <div className="mb-3">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 mb-2">
             <div className="flex-1 bg-gray-200 rounded-full h-2">
               <div
                 className={`h-2 rounded-full transition-all duration-300 ${getProgressColor(task.averageProgress)}`}
@@ -105,6 +105,14 @@ export const TaskCard = ({ task, onUpdate }: TaskCardProps) => {
               {task.averageProgress.toFixed(1)}%
             </span>
           </div>
+          {task.totalPrice > 0 && (
+            <div className="flex items-center gap-1.5 text-xs">
+              <span className="text-gray-500">💰</span>
+              <span className="font-semibold text-gray-800">
+                Total: {task.totalPrice.toFixed(2)}€
+              </span>
+            </div>
+          )}
         </div>
 
         <div className="space-y-2">

@@ -101,6 +101,18 @@ export const SubtaskItem = ({ subtask, onUpdate }: SubtaskItemProps) => {
                 </div>
               </>
             )}
+
+            {subtask.price && (
+              <>
+                <span className="text-gray-300">|</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-gray-500 text-xs">💰</span>
+                  <span className="font-semibold text-gray-900 text-xs">
+                    {subtask.price.toFixed(2)}€
+                  </span>
+                </div>
+              </>
+            )}
           </div>
 
           <span className="text-gray-500 italic text-xs">{subtask.createdBy}</span>
