@@ -126,17 +126,15 @@ export const Dashboard = () => {
               </div>
             </div>
 
-            {/* Budget - show when expanded (all devices) or scrolled desktop */}
-            {(!isScrolled || (isScrolled && window.innerWidth >= 640)) && (
-              <div className={`flex col-span-1 items-center gap-2 ${isScrolled ? 'col-span-1' : 'col-span-1 sm:col-span-1'}`}>
-                <span className={`font-semibold text-pink-100 whitespace-nowrap ${isScrolled ? 'text-xs' : 'text-xs sm:text-sm'}`}>
-                  {!isScrolled && t('dashboard.totalBudget')}
-                </span>
-                <span className={`font-bold text-white ${isScrolled ? 'text-xs' : 'text-xs sm:text-sm'}`}>
-                  {totalBudget().toFixed(2)}€
-                </span>
-              </div>
-            )}
+            {/* Budget - always visible, shown on all states */}
+            <div className={`flex col-span-1 items-center gap-2`}>
+              <span className={`font-semibold text-pink-100 whitespace-nowrap ${isScrolled ? 'text-xs' : 'text-xs sm:text-sm'}`}>
+                {!isScrolled && t('dashboard.totalBudget')}
+              </span>
+              <span className={`font-bold text-white ${isScrolled ? 'text-xs' : 'text-xs sm:text-sm'}`}>
+                {totalBudget().toFixed(2)}€
+              </span>
+            </div>
 
             {/* Add button */}
             <button
