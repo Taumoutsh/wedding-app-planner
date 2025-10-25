@@ -30,13 +30,13 @@ export const SubtaskFormModal = ({
     if (subtask) {
       setTitle(subtask.title);
       setComment(subtask.comment);
-      setDate(new Date(subtask.date).toISOString().split('T')[0]);
+      setDate(subtask.date ? new Date(subtask.date).toISOString().split('T')[0] : '');
       setProgressPercentage(subtask.progressPercentage);
       setWeight(subtask.weight);
     } else {
       setTitle('');
       setComment('');
-      setDate(new Date().toISOString().split('T')[0]);
+      setDate('');
       setProgressPercentage(0);
       setWeight(1);
     }
@@ -52,7 +52,7 @@ export const SubtaskFormModal = ({
       const data = {
         title,
         comment,
-        date: new Date(date),
+        date: date ? new Date(date) : null,
         progressPercentage,
         weight,
       };
@@ -114,16 +114,29 @@ export const SubtaskFormModal = ({
 
         <div className="mb-4">
           <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
-            Date
+            Date (Optional)
           </label>
-          <input
-            id="date"
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
-            required
-          />
+          <div className="relative">
+            <input
+              id="date"
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+            />
+            {date && (
+              <button
+                type="button"
+                onClick={() => setDate('')}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-600 transition p-1"
+                title="Clear date"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4 mb-4">

@@ -28,7 +28,7 @@ export interface Subtask {
   taskId: number;
   title: string;
   comment: string;
-  date: Date;
+  date: Date | null;
   createdBy: string;
   progressPercentage: number;
   weight: number;
@@ -88,7 +88,7 @@ export interface CreateSubtaskRequest {
   taskId: number;
   title: string;
   comment: string;
-  date: Date;
+  date: Date | null;
   progressPercentage: number;
   weight: number;
 }
@@ -96,7 +96,7 @@ export interface CreateSubtaskRequest {
 export interface UpdateSubtaskRequest {
   title: string;
   comment: string;
-  date: Date;
+  date: Date | null;
   progressPercentage: number;
   weight: number;
 }

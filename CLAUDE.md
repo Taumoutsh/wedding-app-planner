@@ -36,10 +36,16 @@ Create a web application for organizing a wedding.
 - A subtask contains:
   - A title
   - A comment
-  - A date
+  - A date (represents the target/deadline date for the subtask, not creation date)
   - The creator's name (login account)
   - A progress percentage
   - A weight (allowing a weighted average calculation)
+
+#### Subtask Display Rules
+- Subtasks are sorted by date: closest deadline first
+- Past-due subtasks (date already passed) are displayed at the bottom
+- Past-due subtasks are shown with reduced opacity to indicate they are overdue
+- Color-coded progress bars indicate completion status (red → orange → yellow → lime → green)
 
 ## Progress Tracking
 The overall progress of the wedding will be represented by the weighted average of all entered subtasks.

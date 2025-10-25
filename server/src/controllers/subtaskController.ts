@@ -27,7 +27,7 @@ export const createSubtask = async (req: AuthRequest, res: Response) => {
         taskId,
         title,
         comment: comment || '',
-        date: new Date(date),
+        date: date ? new Date(date) : null,
         createdBy: req.user!.username,
         progressPercentage: progressPercentage || 0,
         weight: weight || 1,
@@ -62,7 +62,7 @@ export const updateSubtask = async (req: AuthRequest, res: Response) => {
       data: {
         title,
         comment: comment || '',
-        date: new Date(date),
+        date: date ? new Date(date) : null,
         progressPercentage,
         weight,
       },

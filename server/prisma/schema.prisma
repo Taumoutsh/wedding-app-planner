@@ -40,17 +40,17 @@ model Task {
 }
 
 model Subtask {
-  id                 Int      @id @default(autoincrement())
+  id                 Int       @id @default(autoincrement())
   taskId             Int
   title              String
-  comment            String   @default("")
-  date               DateTime
+  comment            String    @default("")
+  date               DateTime?
   createdBy          String
-  progressPercentage Int      @default(0)
-  weight             Int      @default(1)
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-  task               Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  progressPercentage Int       @default(0)
+  weight             Int       @default(1)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  task               Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
 
   @@map("subtasks")
 }

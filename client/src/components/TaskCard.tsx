@@ -25,6 +25,39 @@ export const TaskCard = ({ task, onUpdate }: TaskCardProps) => {
     }
   };
 
+  const getProgressColor = (percentage: number) => {
+    if (percentage === 0) return 'bg-gray-300';
+    if (percentage < 25) return 'bg-red-500';
+    if (percentage < 50) return 'bg-orange-500';
+    if (percentage < 75) return 'bg-yellow-500';
+    if (percentage < 100) return 'bg-lime-500';
+    return 'bg-green-500';
+  };
+
+  const sortedSubtasks = task.subtasks ? [...task.subtasks].sort((a, b) => {
+    // Handle null dates - push to bottom
+    if (!a.date && !b.date) return 0;
+    if (!a.date) return 1;
+    if (!b.date) return -1;
+
+    const now = new Date();
+    const dateA = new Date(a.date);
+    const dateB = new Date(b.date);
+    const isPastA = dateA < now;
+    const isPastB = dateB < now;
+
+    // If one is past and the other isn't, past goes to bottom
+    if (isPastA && !isPastB) return 1;
+    if (!isPastA && isPastB) return -1;
+
+    // Both are future or both are past: sort by date (closest first for future, oldest first for past)
+    if (!isPastA && !isPastB) {
+      return dateA.getTime() - dateB.getTime(); // Ascending for future dates
+    } else {
+      return dateA.getTime() - dateB.getTime(); // Ascending for past dates (oldest first)
+    }
+  }) : [];
+
   return (
     <>
       <div className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
@@ -62,7 +95,7 @@ export const TaskCard = ({ task, onUpdate }: TaskCardProps) => {
           <div className="flex items-center gap-2">
             <div className="flex-1 bg-gray-200 rounded-full h-2">
               <div
-                className="bg-green-500 h-2 rounded-full transition-all duration-300"
+                className={`h-2 rounded-full transition-all duration-300 ${getProgressColor(task.averageProgress)}`}
                 style={{ width: `${task.averageProgress}%` }}
               />
             </div>
@@ -73,8 +106,8 @@ export const TaskCard = ({ task, onUpdate }: TaskCardProps) => {
         </div>
 
         <div className="space-y-2">
-          {task.subtasks && task.subtasks.length > 0 ? (
-            task.subtasks.map((subtask) => (
+          {sortedSubtasks.length > 0 ? (
+            sortedSubtasks.map((subtask) => (
               <SubtaskItem key={subtask.id} subtask={subtask} onUpdate={onUpdate} />
             ))
           ) : (
