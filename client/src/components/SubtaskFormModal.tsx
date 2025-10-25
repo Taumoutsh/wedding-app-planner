@@ -25,6 +25,7 @@ export const SubtaskFormModal = ({
   const [date, setDate] = useState('');
   const [progressPercentage, setProgressPercentage] = useState(0);
   const [weight, setWeight] = useState(1);
+  const [price, setPrice] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -35,12 +36,14 @@ export const SubtaskFormModal = ({
       setDate(subtask.date ? new Date(subtask.date).toISOString().split('T')[0] : '');
       setProgressPercentage(subtask.progressPercentage);
       setWeight(subtask.weight);
+      setPrice(subtask.price || null);
     } else {
       setTitle('');
       setComment('');
       setDate('');
       setProgressPercentage(0);
       setWeight(1);
+      setPrice(null);
     }
     setError('');
   }, [subtask, isOpen]);
@@ -57,6 +60,7 @@ export const SubtaskFormModal = ({
         date: date ? new Date(date) : null,
         progressPercentage,
         weight,
+        price: price || null,
       };
 
       if (subtask) {
@@ -141,7 +145,7 @@ export const SubtaskFormModal = ({
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 mb-4">
+        <div className="grid grid-cols-3 gap-4 mb-4">
           <div>
             <label htmlFor="progress" className="block text-sm font-medium text-gray-700 mb-1">
               {t('subtaskFormModal.progress')}
@@ -170,6 +174,21 @@ export const SubtaskFormModal = ({
               onChange={(e) => setWeight(parseInt(e.target.value) || 1)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
               required
+            />
+          </div>
+
+          <div>
+            <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
+              {t('subtaskFormModal.price')}
+            </label>
+            <input
+              id="price"
+              type="number"
+              min="0"
+              step="0.01"
+              value={price || ''}
+              onChange={(e) => setPrice(e.target.value ? parseFloat(e.target.value) : null)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
             />
           </div>
         </div>

@@ -55,37 +55,37 @@ export const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm border-b sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <header className="bg-gradient-to-r from-pink-500 to-purple-500 shadow-lg sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex justify-between items-start mb-4">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">
                 {t('dashboard.heading')}
               </h1>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-sm sm:text-base text-pink-100 mt-1">
                 {t('dashboard.welcome', { username: user?.username || '' })}
               </p>
             </div>
             <button
               onClick={logout}
-              className="px-4 py-2 text-sm text-gray-700 hover:text-gray-900 border border-gray-300 rounded-md hover:bg-gray-50 transition"
+              className="px-3 sm:px-4 py-2 text-xs sm:text-sm text-pink-500 hover:text-pink-700 bg-white hover:bg-pink-50 border border-white rounded-md transition font-medium"
             >
               {t('dashboard.logout')}
             </button>
           </div>
 
-          <div className="mt-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="text-sm font-medium text-gray-700">{t('dashboard.overallProgress')}</span>
-              <div className="flex items-center gap-2">
-                <div className="w-32 bg-gray-200 rounded-full h-2.5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+              <span className="text-xs sm:text-sm font-semibold text-pink-100 whitespace-nowrap">{t('dashboard.overallProgress')}</span>
+              <div className="flex items-center gap-2 flex-1">
+                <div className="flex-1 bg-white/30 rounded-full h-2">
                   <div
-                    className="bg-pink-500 h-2.5 rounded-full transition-all duration-300"
+                    className="bg-white h-2 rounded-full transition-all duration-300"
                     style={{ width: `${overallProgress()}%` }}
                   />
                 </div>
-                <span className="text-sm font-semibold text-gray-900">
+                <span className="text-xs sm:text-sm font-bold text-white min-w-[3.5rem]">
                   {overallProgress().toFixed(1)}%
                 </span>
               </div>
@@ -93,7 +93,7 @@ export const Dashboard = () => {
 
             <button
               onClick={() => setShowCategoryModal(true)}
-              className="px-4 py-2 bg-pink-500 text-white rounded-md hover:bg-pink-600 transition text-sm sm:text-base"
+              className="px-4 py-2 bg-white text-pink-600 hover:bg-pink-50 rounded-md transition text-sm sm:text-base font-semibold shadow-md"
             >
               <span className="hidden sm:inline">{t('dashboard.addCategory')}</span>
               <span className="inline sm:hidden">{t('dashboard.addCategoryMobile')}</span>
@@ -102,7 +102,7 @@ export const Dashboard = () => {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
         {categories.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-gray-600 mb-4">{t('dashboard.noCategoriesEmpty')}</p>
