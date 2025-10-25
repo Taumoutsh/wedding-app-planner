@@ -105,8 +105,9 @@ export const Dashboard = () => {
           )}
 
           {/* Stats section - always visible but compact when scrolled */}
-          <div className={`grid ${isScrolled ? 'grid-cols-3 gap-2 sm:gap-4' : 'grid-cols-1 sm:grid-cols-2 gap-4'}`}>
-            <div className={`flex ${isScrolled ? 'flex-col gap-1' : 'flex-col gap-3'}`}>
+          <div className={`grid items-center ${isScrolled ? 'grid-cols-4 gap-2' : 'grid-cols-1 sm:grid-cols-3 gap-4'}`}>
+            {/* Progress section */}
+            <div className={`col-span-2 sm:col-span-1 flex ${isScrolled ? 'flex-col gap-1' : 'flex-col gap-3'}`}>
               <div className={`flex ${isScrolled ? 'flex-col gap-1' : 'flex-col sm:flex-row sm:items-center gap-2'}`}>
                 <span className={`font-semibold text-pink-100 whitespace-nowrap ${isScrolled ? 'text-xs hidden sm:inline' : 'text-xs sm:text-sm'}`}>
                   {t('dashboard.overallProgress')}
@@ -134,20 +135,28 @@ export const Dashboard = () => {
               )}
             </div>
 
-            {/* Budget - only visible on desktop or when not scrolled */}
-            {!isScrolled && (
-              <div className="hidden sm:flex items-center gap-2">
-                <span className="text-xs sm:text-sm font-semibold text-pink-100 whitespace-nowrap">{t('dashboard.totalBudget')}</span>
-                <span className="text-xs sm:text-sm font-bold text-white">
-                  {totalBudget().toFixed(2)}€
-                </span>
+            {/* Budget - visible when expanded or on scrolled desktop */}
+            {(isScrolled || !isScrolled) && (
+              <div className={`${isScrolled ? 'col-span-1' : 'hidden sm:flex'} items-center gap-2`}>
+                {!isScrolled && (
+                  <>
+                    <span className="text-xs sm:text-sm font-semibold text-pink-100 whitespace-nowrap">{t('dashboard.totalBudget')}</span>
+                    <span className="text-xs sm:text-sm font-bold text-white">
+                      {totalBudget().toFixed(2)}€
+                    </span>
+                  </>
+                )}
+                {isScrolled && (
+                  <span className="text-xs font-bold text-white">
+                    {totalBudget().toFixed(2)}€
+                  </span>
+                )}
               </div>
             )}
 
-            {/* Budget compact - only on scrolled mobile */}
+            {/* Mobile budget when scrolled */}
             {isScrolled && (
-              <div className="flex sm:hidden flex-col gap-1">
-                <span className="text-xs font-semibold text-pink-100 text-center hidden">Budget</span>
+              <div className="col-span-1 sm:hidden flex flex-col gap-1">
                 <span className="text-xs font-bold text-white text-center">
                   {totalBudget().toFixed(2)}€
                 </span>
@@ -157,11 +166,21 @@ export const Dashboard = () => {
             {/* Add button */}
             <button
               onClick={() => setShowCategoryModal(true)}
-              className={`bg-white text-pink-600 hover:bg-pink-50 rounded-md transition font-semibold shadow-md ${isScrolled ? 'px-2 py-1 text-xs' : 'px-4 py-2 text-sm sm:text-base h-fit sm:h-auto'}`}
+              className={`bg-white text-pink-600 hover:bg-pink-50 rounded-md transition font-semibold shadow-md ${isScrolled ? 'px-2 py-1 text-xs col-span-1' : 'px-4 py-2 text-sm sm:text-base h-fit sm:h-auto col-span-1'}`}
             >
               <span className="hidden sm:inline">{t('dashboard.addCategory')}</span>
               <span className="inline sm:hidden">{isScrolled ? '+' : t('dashboard.addCategoryMobile')}</span>
             </button>
+
+            {/* Logout button - shown on scrolled state desktop */}
+            {isScrolled && (
+              <button
+                onClick={logout}
+                className="hidden sm:block px-3 py-1 text-xs text-pink-500 hover:text-pink-700 bg-white hover:bg-pink-50 border border-white rounded transition font-medium"
+              >
+                {t('dashboard.logout')}
+              </button>
+            )}
           </div>
         </div>
       </header>
