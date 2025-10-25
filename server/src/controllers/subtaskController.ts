@@ -5,7 +5,7 @@ import { CreateSubtaskRequest, UpdateSubtaskRequest, SubtaskDTO } from '@wedding
 
 export const createSubtask = async (req: AuthRequest, res: Response) => {
   try {
-    const { taskId, title, comment, date, progressPercentage, weight } =
+    const { taskId, title, comment, date, progressPercentage, weight, price } =
       req.body as CreateSubtaskRequest;
 
     if (!title || title.trim() === '') {
@@ -31,6 +31,7 @@ export const createSubtask = async (req: AuthRequest, res: Response) => {
         createdBy: req.user!.username,
         progressPercentage: progressPercentage || 0,
         weight: weight || 1,
+        price: price || null,
       },
     });
 
@@ -47,7 +48,7 @@ export const createSubtask = async (req: AuthRequest, res: Response) => {
 export const updateSubtask = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const { title, comment, date, progressPercentage, weight } =
+    const { title, comment, date, progressPercentage, weight, price } =
       req.body as UpdateSubtaskRequest;
 
     if (!title || title.trim() === '') {
@@ -65,6 +66,7 @@ export const updateSubtask = async (req: AuthRequest, res: Response) => {
         date: date ? new Date(date) : null,
         progressPercentage,
         weight,
+        price: price || null,
       },
     });
 
