@@ -76,8 +76,8 @@ export const SubtaskItem = ({ subtask, onUpdate }: SubtaskItemProps) => {
           <p className="text-gray-600 mb-2">{subtask.comment}</p>
         )}
 
-        <div className="flex items-center gap-3 justify-between flex-wrap">
-          <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
             <div className="flex items-center gap-1.5 min-w-[90px]">
               <div className="flex-1 bg-gray-200 rounded-full h-1.5 max-w-[80px]">
                 <div
@@ -90,32 +90,28 @@ export const SubtaskItem = ({ subtask, onUpdate }: SubtaskItemProps) => {
               </span>
             </div>
 
-            {subtask.date && (
-              <>
-                <span className="text-gray-300">|</span>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+              {subtask.date && (
                 <div className="flex items-center gap-1.5">
-                  <span className="text-gray-500">{t('subtaskItem.dateLabel')}</span>
-                  <span className="font-semibold text-gray-900">
+                  <span className="text-gray-500 text-xs hidden sm:inline">{t('subtaskItem.dateLabel')}</span>
+                  <span className="font-semibold text-gray-900 text-xs">
                     {formatDate(subtask.date)}
                   </span>
                 </div>
-              </>
-            )}
+              )}
 
-            {subtask.price && (
-              <>
-                <span className="text-gray-300">|</span>
+              {subtask.price && (
                 <div className="flex items-center gap-1.5">
                   <span className="text-gray-500 text-xs">💰</span>
                   <span className="font-semibold text-gray-900 text-xs">
                     {subtask.price.toFixed(2)}€
                   </span>
                 </div>
-              </>
-            )}
+              )}
+            </div>
           </div>
 
-          <span className="text-gray-500 italic text-xs">{subtask.createdBy}</span>
+          <span className="text-gray-500 italic text-xs sm:text-right">{subtask.createdBy}</span>
         </div>
       </div>
 
