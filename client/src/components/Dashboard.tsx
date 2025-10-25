@@ -95,7 +95,8 @@ export const Dashboard = () => {
               onClick={() => setShowCategoryModal(true)}
               className="px-4 py-2 bg-pink-500 text-white rounded-md hover:bg-pink-600 transition text-sm sm:text-base"
             >
-              {t('dashboard.addCategory')}
+              <span className="hidden sm:inline">{t('dashboard.addCategory')}</span>
+              <span className="inline sm:hidden">{t('dashboard.addCategoryMobile')}</span>
             </button>
           </div>
         </div>
