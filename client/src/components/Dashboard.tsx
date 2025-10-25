@@ -73,7 +73,7 @@ export const Dashboard = () => {
         <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-300 ${isScrolled ? 'py-2 sm:py-3' : 'py-6'}`}>
           {/* Title section - hidden on mobile when scrolled */}
           {!isScrolled && (
-            <div className="flex justify-between items-start mb-4">
+            <div className="flex justify-between items-start mb-4 sm:mb-0">
               <div>
                 <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">
                   {t('dashboard.heading')}
@@ -104,8 +104,8 @@ export const Dashboard = () => {
             </div>
           )}
 
-          {/* Stats section - always visible but compact when scrolled */}
-          <div className={`grid items-center ${isScrolled ? 'grid-cols-4 gap-2' : 'grid-cols-1 sm:grid-cols-3 gap-4'}`}>
+          {/* Stats section - grid layout changes based on scroll state */}
+          <div className={`grid items-center ${isScrolled ? 'grid-cols-3 sm:grid-cols-4 gap-2' : 'grid-cols-1 sm:grid-cols-3 gap-4'}`}>
             {/* Progress section */}
             <div className={`col-span-2 sm:col-span-1 flex ${isScrolled ? 'flex-col gap-1' : 'flex-col gap-3'}`}>
               <div className={`flex ${isScrolled ? 'flex-col gap-1' : 'flex-col sm:flex-row sm:items-center gap-2'}`}>
@@ -124,44 +124,17 @@ export const Dashboard = () => {
                   </span>
                 </div>
               </div>
-
-              {!isScrolled && (
-                <div className="flex items-center gap-2">
-                  <span className="text-xs sm:text-sm font-semibold text-pink-100 whitespace-nowrap">{t('dashboard.totalBudget')}</span>
-                  <span className="text-xs sm:text-sm font-bold text-white">
-                    {totalBudget().toFixed(2)}€
-                  </span>
-                </div>
-              )}
             </div>
 
-            {/* Budget - visible when expanded or on scrolled desktop */}
-            {(isScrolled || !isScrolled) && (
-              <div className={`${isScrolled ? 'col-span-1' : 'hidden sm:flex'} items-center gap-2`}>
-                {!isScrolled && (
-                  <>
-                    <span className="text-xs sm:text-sm font-semibold text-pink-100 whitespace-nowrap">{t('dashboard.totalBudget')}</span>
-                    <span className="text-xs sm:text-sm font-bold text-white">
-                      {totalBudget().toFixed(2)}€
-                    </span>
-                  </>
-                )}
-                {isScrolled && (
-                  <span className="text-xs font-bold text-white">
-                    {totalBudget().toFixed(2)}€
-                  </span>
-                )}
-              </div>
-            )}
-
-            {/* Mobile budget when scrolled */}
-            {isScrolled && (
-              <div className="col-span-1 sm:hidden flex flex-col gap-1">
-                <span className="text-xs font-bold text-white text-center">
-                  {totalBudget().toFixed(2)}€
-                </span>
-              </div>
-            )}
+            {/* Budget - desktop only */}
+            <div className="hidden sm:flex col-span-1 items-center gap-2">
+              <span className={`font-semibold text-pink-100 whitespace-nowrap ${isScrolled ? 'text-xs' : 'text-xs sm:text-sm'}`}>
+                {!isScrolled && t('dashboard.totalBudget')}
+              </span>
+              <span className={`font-bold text-white ${isScrolled ? 'text-xs' : 'text-xs sm:text-sm'}`}>
+                {totalBudget().toFixed(2)}€
+              </span>
+            </div>
 
             {/* Add button */}
             <button
@@ -172,11 +145,11 @@ export const Dashboard = () => {
               <span className="inline sm:hidden">{isScrolled ? '+' : t('dashboard.addCategoryMobile')}</span>
             </button>
 
-            {/* Logout button - shown on scrolled state desktop */}
+            {/* Logout button - shown on scrolled state desktop only */}
             {isScrolled && (
               <button
                 onClick={logout}
-                className="hidden sm:block px-3 py-1 text-xs text-pink-500 hover:text-pink-700 bg-white hover:bg-pink-50 border border-white rounded transition font-medium"
+                className="hidden sm:block px-3 py-1 text-xs text-pink-500 hover:text-pink-700 bg-white hover:bg-pink-50 border border-white rounded transition font-medium col-span-1"
               >
                 {t('dashboard.logout')}
               </button>
