@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
 import authRoutes from './routes/auth';
 import categoryRoutes from './routes/categories';
 import taskRoutes from './routes/tasks';
@@ -15,11 +16,20 @@ const PORT = parseInt(process.env.PORT || '3001', 10);
 app.use(cors());
 app.use(express.json());
 
+// Serve static files from client build
+const clientBuildPath = path.join(__dirname, '../../client/dist');
+app.use(express.static(clientBuildPath));
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/subtasks', subtaskRoutes);
+
+// Serve index.html for all non-API routes (SPA fallback)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(clientBuildPath, 'index.html'));
+});
 
 // Error handler
 app.use(errorHandler);
