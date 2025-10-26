@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: wedding-planner-app
+    ports:
+      - "127.0.0.1:6001:6001"
+    environment:
+      - NODE_ENV=production
+      - PORT=6001
+      - DATABASE_URL=file:./prisma/prod.db
+    volumes:
+      - ./data:/app/server/prisma
+    restart: unless-stopped
+    networks:
+      - wedding-network
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: wedding-planner-nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - app
+    restart: unless-stopped
+    networks:
+      - wedding-network
+
+networks:
+  wedding-network:
+    driver: bridge
