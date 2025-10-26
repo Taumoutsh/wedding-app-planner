@@ -14,7 +14,7 @@ That's it! This script will:
 
 ## Access the Application
 
-- **Frontend + API**: http://localhost (via nginx reverse proxy)
+- **Frontend + API**: http://localhost:8080 (via nginx reverse proxy)
 - **Direct to app**: http://localhost:6001
 
 ## Useful Commands
