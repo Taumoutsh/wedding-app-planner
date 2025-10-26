@@ -27,13 +27,14 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/subtasks', subtaskRoutes);
 
+// Error handler (must be before SPA fallback)
+app.use(errorHandler);
+
 // Serve index.html for all non-API routes (SPA fallback)
-app.get('*', (req, res) => {
+// This must be last so it catches all remaining requests
+app.get('*', (_req, res) => {
   res.sendFile(path.join(clientBuildPath, 'index.html'));
 });
-
-// Error handler
-app.use(errorHandler);
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server is running on port ${PORT}`);
