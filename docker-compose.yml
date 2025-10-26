@@ -5,11 +5,11 @@ services:
       dockerfile: Dockerfile
     container_name: wedding-planner-app
     ports:
-      - "0.0.0.0:6001:3000"
-      - "0.0.0.0:6002:3000"
+      - "0.0.0.0:6001:3001"
+      - "0.0.0.0:6002:3001"
     environment:
       - NODE_ENV=production
-      - PORT=3000
+      - PORT=3001
       - DATABASE_URL=file:./prisma/prod.db
     volumes:
       - ./data:/app/server/prisma
