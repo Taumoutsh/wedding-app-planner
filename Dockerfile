@@ -28,8 +28,11 @@ RUN cd client && npm run build && cd ..
 
 # Create startup script
 RUN echo '#!/bin/sh' > /start.sh && \
+    echo 'set -e' >> /start.sh && \
     echo 'cd /app/server' >> /start.sh && \
-    echo 'npx prisma migrate deploy --schema ./prisma/schema.prisma 2>/dev/null || true' >> /start.sh && \
+    echo 'echo "Running Prisma migrations..."' >> /start.sh && \
+    echo 'npx prisma migrate deploy --schema ./prisma/schema.prisma || echo "Migrations failed or already applied"' >> /start.sh && \
+    echo 'echo "Starting server..."' >> /start.sh && \
     echo 'npm start' >> /start.sh && \
     chmod +x /start.sh
 
