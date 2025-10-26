@@ -18,6 +18,9 @@ RUN npm ci
 # Build shared library
 RUN cd shared && npm run build && cd ..
 
+# Build server
+RUN cd server && npm run build && cd ..
+
 # Build client
 RUN cd client && npm run build && cd ..
 
