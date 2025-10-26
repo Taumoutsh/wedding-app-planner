@@ -132,3 +132,8 @@ Translations are organized by component/feature:
 - `subtaskFormModal` - Subtask creation/edit modal
 - `subtaskItem` - Subtask item display and dialogs
 - `confirmDialog` - Confirmation dialog translations
+
+## Git Workflow
+- **Do NOT automatically commit changes** - Wait for explicit commit requests
+- Only commit when explicitly asked to do so
+- This allows for review of changes before committing
