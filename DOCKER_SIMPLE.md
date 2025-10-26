@@ -16,7 +16,7 @@ That's it! This script will:
 
 - **Nginx HTTP**: http://localhost:6001 (reverse proxy, port 6001)
 - **Nginx Alternative**: http://localhost:6002 (reverse proxy, port 6002)
-- **App Direct**: http://localhost:6001 (direct, internal only in docker)
+- **App Direct**: http://localhost:3000 (direct, internal only in docker)
 
 ## Useful Commands
 

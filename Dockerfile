@@ -31,6 +31,6 @@ RUN echo '#!/bin/sh' > /start.sh && \
     echo 'npm start' >> /start.sh && \
     chmod +x /start.sh
 
-EXPOSE 6001
+EXPOSE 3000
 
 CMD ["/start.sh"]
