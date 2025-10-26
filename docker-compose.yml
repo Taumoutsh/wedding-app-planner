@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   wedding-planner:
     build:
@@ -17,8 +15,8 @@ services:
       - ./data:/app/server/prisma
     restart: unless-stopped
     networks:
-      - web-network
+      - wedding-network
 
 networks:
-  web-network:
-    external: true
+  wedding-network:
+    driver: bridge
