@@ -14,6 +14,9 @@ COPY shared ./shared
 # Install dependencies
 RUN npm ci
 
+# Generate Prisma client
+RUN npx prisma generate --schema=./server/prisma/schema.prisma
+
 # Build shared package
 RUN cd shared && npm run build && cd ..
 
