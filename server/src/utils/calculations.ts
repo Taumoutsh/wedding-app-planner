@@ -1,5 +1,16 @@
-import { PrismaClient } from '@prisma/client';
-import type { Subtask } from '@prisma/client';
+interface Subtask {
+  id: number;
+  taskId: number;
+  title: string;
+  comment: string;
+  date: Date | null;
+  createdBy: string;
+  progressPercentage: number;
+  weight: number;
+  price: number | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 export const calculateWeightedAverage = (subtasks: Subtask[]): number => {
   if (subtasks.length === 0) return 0;
