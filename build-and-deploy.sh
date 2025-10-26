@@ -15,6 +15,17 @@ echo -e "${BLUE}Creating data directory...${NC}"
 mkdir -p data
 echo -e "${GREEN}✓ Data directory ready${NC}\n"
 
+# Backup existing database if it exists
+if [ -f "data/prod.db" ]; then
+    echo -e "${BLUE}Backing up existing database...${NC}"
+    BACKUP_DIR="data/backups"
+    mkdir -p "$BACKUP_DIR"
+    TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+    BACKUP_FILE="$BACKUP_DIR/prod.db.backup_$TIMESTAMP"
+    cp "data/prod.db" "$BACKUP_FILE"
+    echo -e "${GREEN}✓ Database backed up to: $BACKUP_FILE${NC}\n"
+fi
+
 # Build Docker image
 echo -e "${BLUE}Building Docker image...${NC}"
 docker compose build --no-cache
