@@ -1,4 +1,5 @@
-import { Subtask } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+import type { Subtask } from '@prisma/client';
 
 export const calculateWeightedAverage = (subtasks: Subtask[]): number => {
   if (subtasks.length === 0) return 0;

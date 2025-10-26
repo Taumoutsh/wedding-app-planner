@@ -22,13 +22,13 @@ echo -e "${GREEN}✓ Data directory ready${NC}\n"
 
 # Build Docker images
 echo -e "${BLUE}Building Docker images...${NC}"
-docker-compose build --no-cache
+docker compose build --no-cache
 
 echo -e "${GREEN}✓ Docker images built${NC}\n"
 
 # Start containers
 echo -e "${BLUE}Starting containers...${NC}"
-docker-compose up -d
+docker compose up -d
 
 echo -e "${GREEN}✓ Containers started${NC}\n"
 
@@ -37,7 +37,7 @@ sleep 3
 
 # Show status
 echo -e "${BLUE}Container Status:${NC}"
-docker-compose ps
+docker compose ps
 
 echo -e "\n${GREEN}✓ Wedding Planner is running!${NC}"
 echo -e "${BLUE}================================${NC}"
@@ -47,7 +47,7 @@ echo -e "App:         http://localhost:3000 (internal)"
 echo -e "${BLUE}================================${NC}\n"
 
 echo -e "${BLUE}Useful commands:${NC}"
-echo -e "  View logs:     ${GREEN}docker-compose logs -f${NC}"
-echo -e "  Stop:          ${GREEN}docker-compose stop${NC}"
-echo -e "  Stop & remove: ${GREEN}docker-compose down${NC}"
-echo -e "  Rebuild:       ${GREEN}docker-compose build --no-cache && docker-compose up -d${NC}"
+echo -e "  View logs:     ${GREEN}docker compose logs -f${NC}"
+echo -e "  Stop:          ${GREEN}docker compose stop${NC}"
+echo -e "  Stop & remove: ${GREEN}docker compose down${NC}"
+echo -e "  Rebuild:       ${GREEN}docker compose build --no-cache && docker compose up -d${NC}"

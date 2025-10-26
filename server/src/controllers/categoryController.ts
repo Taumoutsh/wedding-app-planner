@@ -19,12 +19,12 @@ export const getAllCategories = async (req: AuthRequest, res: Response) => {
       },
     });
 
-    const categoriesWithProgress: CategoryDTO[] = categories.map((category) => {
-      const allSubtasks = category.tasks.flatMap((task) => task.subtasks);
+    const categoriesWithProgress: CategoryDTO[] = categories.map((category: any) => {
+      const allSubtasks = category.tasks.flatMap((task: any) => task.subtasks);
       const averageProgress = calculateWeightedAverage(allSubtasks);
       const totalPrice = calculateTotalPrice(allSubtasks);
 
-      const tasks = category.tasks.map((task) => ({
+      const tasks = category.tasks.map((task: any) => ({
         ...task,
         averageProgress: calculateWeightedAverage(task.subtasks),
         totalPrice: calculateTotalPrice(task.subtasks),
@@ -112,11 +112,11 @@ export const updateCategory = async (req: AuthRequest, res: Response) => {
       },
     });
 
-    const allSubtasks = category.tasks.flatMap((task) => task.subtasks);
+    const allSubtasks = category.tasks.flatMap((task: any) => task.subtasks);
     const averageProgress = calculateWeightedAverage(allSubtasks);
     const totalPrice = calculateTotalPrice(allSubtasks);
 
-    const tasks = category.tasks.map((task) => ({
+    const tasks = category.tasks.map((task: any) => ({
       ...task,
       averageProgress: calculateWeightedAverage(task.subtasks),
       totalPrice: calculateTotalPrice(task.subtasks),

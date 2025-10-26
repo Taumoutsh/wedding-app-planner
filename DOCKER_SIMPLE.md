@@ -22,35 +22,35 @@ That's it! This script will:
 
 ### View logs
 ```bash
-docker-compose logs -f
+docker compose logs -f
 ```
 
 ### View specific service logs
 ```bash
-docker-compose logs -f app    # Application logs
-docker-compose logs -f nginx  # Nginx logs
+docker compose logs -f app    # Application logs
+docker compose logs -f nginx  # Nginx logs
 ```
 
 ### Stop containers
 ```bash
-docker-compose stop
+docker compose stop
 ```
 
 ### Stop and remove containers
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ### Restart containers
 ```bash
-docker-compose restart
+docker compose restart
 ```
 
 ### Rebuild and restart
 ```bash
 ./build-and-run.sh
 # or manually:
-docker-compose build --no-cache && docker-compose up -d
+docker compose build --no-cache && docker compose up -d
 ```
 
 ## What's Inside
@@ -92,12 +92,12 @@ Migrations run automatically on container start.
 
 **Container won't start**
 ```bash
-docker-compose logs app
+docker compose logs app
 ```
 
 **Nginx can't connect to app**
-- Make sure both services are running: `docker-compose ps`
-- Check app logs: `docker-compose logs app`
+- Make sure both services are running: `docker compose ps`
+- Check app logs: `docker compose logs app`
 
 **Port already in use**
 ```bash
