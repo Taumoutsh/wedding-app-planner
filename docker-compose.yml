@@ -10,7 +10,7 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3001
-      - DATABASE_URL=file:./prisma/prod.db
+      - DATABASE_URL=file:./prod.db
     volumes:
       - ./data/prod.db:/app/server/prisma/prod.db
     restart: unless-stopped
