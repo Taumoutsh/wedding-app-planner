@@ -18,6 +18,7 @@ app.use(express.json());
 
 // Serve static files from client build
 const clientBuildPath = path.join(__dirname, '../../client/dist');
+console.log(`Serving static files from: ${clientBuildPath}`);
 app.use(express.static(clientBuildPath));
 
 // Routes
