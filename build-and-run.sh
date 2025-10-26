@@ -41,8 +41,9 @@ docker-compose ps
 
 echo -e "\n${GREEN}✓ Wedding Planner is running!${NC}"
 echo -e "${BLUE}================================${NC}"
-echo -e "App:   http://localhost:6001"
-echo -e "Nginx: http://localhost:8080"
+echo -e "Nginx HTTP:  http://localhost:6001"
+echo -e "Nginx ALT:   http://localhost:6002"
+echo -e "App Direct:  http://localhost:6001 (internal)"
 echo -e "${BLUE}================================${NC}\n"
 
 echo -e "${BLUE}Useful commands:${NC}"

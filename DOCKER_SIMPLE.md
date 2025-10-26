@@ -14,8 +14,9 @@ That's it! This script will:
 
 ## Access the Application
 
-- **Frontend + API**: http://localhost:8080 (via nginx reverse proxy)
-- **Direct to app**: http://localhost:6001
+- **Nginx HTTP**: http://localhost:6001 (reverse proxy, port 6001)
+- **Nginx Alternative**: http://localhost:6002 (reverse proxy, port 6002)
+- **App Direct**: http://localhost:6001 (direct, internal only in docker)
 
 ## Useful Commands
 

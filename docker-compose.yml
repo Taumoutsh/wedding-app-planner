@@ -24,7 +24,8 @@ services:
       dockerfile: Dockerfile
     container_name: wedding-planner-nginx
     ports:
-      - "8080:80"
+      - "6001:6001"
+      - "6002:6002"
     depends_on:
       - app
     restart: unless-stopped
