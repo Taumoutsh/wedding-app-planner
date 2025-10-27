@@ -89,24 +89,23 @@ export const Dashboard = () => {
         <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-300 ${isScrolled ? 'py-2 sm:py-3' : 'py-6'}`}>
           {/* Title section - hidden on mobile when scrolled */}
           {!isScrolled && (
-            <div className="flex justify-between items-start mb-4 sm:mb-0">
-              <div>
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">
-                  {t('dashboard.heading')}
-                </h1>
-                <p className="text-sm sm:text-base text-pink-100 mt-1">
-                  {t('dashboard.welcome', { username: user?.username || '' })}
-                </p>
+            <div className="flex justify-between items-center mb-4 sm:mb-0">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">
+                {t('dashboard.heading')}
+              </h1>
+              <div className="flex items-center gap-2 sm:gap-3">
+                <span className="text-sm sm:text-base text-white/90">{user?.username || ''}</span>
+                <div className="w-px h-5 sm:h-6 bg-white/30"></div>
+                <button
+                  onClick={logout}
+                  className="p-2 text-white hover:bg-white/20 rounded-md transition"
+                  title={t('dashboard.logout')}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                </button>
               </div>
-              <button
-                onClick={logout}
-                className="p-2 text-white hover:bg-white/20 rounded-md transition"
-                title={t('dashboard.logout')}
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
-              </button>
             </div>
           )}
 
@@ -114,15 +113,19 @@ export const Dashboard = () => {
           {isScrolled && (
             <div className="flex justify-between items-center sm:hidden mb-2">
               <h1 className="text-lg font-bold text-white">{t('dashboard.heading')}</h1>
-              <button
-                onClick={logout}
-                className="p-2 text-white hover:bg-white/20 rounded-md transition"
-                title={t('dashboard.logout')}
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
-              </button>
+              <div className="flex items-center gap-1">
+                <span className="text-xs text-white/90">{user?.username || ''}</span>
+                <div className="w-px h-4 bg-white/30"></div>
+                <button
+                  onClick={logout}
+                  className="p-2 text-white hover:bg-white/20 rounded-md transition"
+                  title={t('dashboard.logout')}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                </button>
+              </div>
             </div>
           )}
 

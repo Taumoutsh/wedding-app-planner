@@ -3,7 +3,6 @@ export const translations = {
     // LoginForm
     loginForm: {
       heading: 'Mariage Tomarea 💍',
-      subheading: 'Sign in to continue',
       username: 'Username',
       password: 'Password',
       signingIn: 'Signing in...',
@@ -112,11 +111,10 @@ export const translations = {
     // LoginForm
     loginForm: {
       heading: 'Mariage Tomarea 💍',
-      subheading: 'Connectez-vous pour continuer',
       username: 'Nom d\'utilisateur',
       password: 'Mot de passe',
       signingIn: 'Connexion en cours...',
-      signIn: 'Se Connecter',
+      signIn: 'Se connecter',
       loginFailed: 'Échec de la connexion',
     },
 
