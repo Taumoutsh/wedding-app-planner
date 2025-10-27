@@ -159,13 +159,13 @@ export const TaskCard = ({ task, onUpdate }: TaskCardProps) => {
           {/* Progress bar and budget - always visible in header */}
           <div className="flex items-center gap-2 flex-wrap mt-2">
             <div className="flex items-center gap-2 flex-shrink-0">
-              <div className="w-[80px] sm:w-[120px] bg-gray-200 rounded-full h-2 sm:h-3">
+              <div className="w-[80px] bg-gray-200 rounded-full h-2">
                 <div
-                  className={`rounded-full transition-all duration-300 h-2 sm:h-3 ${getProgressColor(task.averageProgress)}`}
+                  className={`h-2 rounded-full transition-all duration-300 ${getProgressColor(task.averageProgress)}`}
                   style={{ width: `${task.averageProgress}%` }}
                 />
               </div>
-              <span className="text-xs sm:text-sm font-semibold text-gray-700 whitespace-nowrap">
+              <span className="text-xs font-semibold text-gray-700 whitespace-nowrap">
                 {task.averageProgress.toFixed(1)}%
               </span>
             </div>

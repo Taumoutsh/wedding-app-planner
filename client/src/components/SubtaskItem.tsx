@@ -81,9 +81,9 @@ export const SubtaskItem = ({ subtask, onUpdate }: SubtaskItemProps) => {
           <div className="flex items-center gap-2 flex-wrap">
             {/* Progress bar and percentage - fixed width */}
             <div className="flex items-center gap-1.5 flex-shrink-0">
-              <div className="w-[50px] sm:w-[80px] bg-orange-200 rounded-full h-1.5 sm:h-2">
+              <div className="w-[50px] bg-orange-200 rounded-full h-1.5">
                 <div
-                  className={`rounded-full transition-all duration-300 h-1.5 sm:h-2 ${getProgressColor(subtask.progressPercentage)}`}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${getProgressColor(subtask.progressPercentage)}`}
                   style={{ width: `${subtask.progressPercentage}%` }}
                 />
               </div>
