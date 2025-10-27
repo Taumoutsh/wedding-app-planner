@@ -158,8 +158,8 @@ export const TaskCard = ({ task, onUpdate }: TaskCardProps) => {
 
           {/* Progress bar and budget - always visible in header */}
           <div className="flex items-center gap-2 flex-wrap mt-2">
-            <div className="flex items-center gap-2 min-w-0 flex-1">
-              <div className="flex-1 bg-gray-200 rounded-full h-2 min-w-0">
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <div className="w-[80px] bg-gray-200 rounded-full h-2">
                 <div
                   className={`h-2 rounded-full transition-all duration-300 ${getProgressColor(task.averageProgress)}`}
                   style={{ width: `${task.averageProgress}%` }}
