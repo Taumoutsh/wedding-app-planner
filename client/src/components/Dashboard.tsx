@@ -85,7 +85,7 @@ export const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <header className="bg-gradient-to-r from-[#EB9E6C] via-[#F40E5E] to-[#FA8457] shadow-lg sticky top-0 z-10 transition-all duration-300">
+      <header className="bg-gradient-to-br from-[#F40E5E] to-[#FB7FA0] shadow-lg sticky top-0 z-10 transition-all duration-300">
         <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-300 ${isScrolled ? 'py-2 sm:py-3' : 'py-6'}`}>
           {/* Title section - hidden on mobile when scrolled */}
           {!isScrolled && (
