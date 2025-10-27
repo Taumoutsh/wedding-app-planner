@@ -76,18 +76,18 @@ export const SubtaskItem = ({ subtask, onUpdate }: SubtaskItemProps) => {
           <p className="text-gray-600 mb-2">{subtask.comment}</p>
         )}
 
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <div className="flex flex-col gap-2">
           {/* Progress, date, and budget on one line */}
           <div className="flex items-center gap-2 flex-wrap">
-            {/* Progress bar and percentage */}
-            <div className="flex items-center gap-1.5 min-w-0">
-              <div className="flex-1 bg-orange-200 rounded-full h-1.5 max-w-[60px]">
+            {/* Progress bar and percentage - fixed width */}
+            <div className="flex items-center gap-1.5 w-[80px]">
+              <div className="w-[50px] bg-orange-200 rounded-full h-1.5">
                 <div
                   className={`h-1.5 rounded-full transition-all duration-300 ${getProgressColor(subtask.progressPercentage)}`}
                   style={{ width: `${subtask.progressPercentage}%` }}
                 />
               </div>
-              <span className="text-xs font-semibold text-gray-900 whitespace-nowrap">
+              <span className="text-xs font-semibold text-gray-900 whitespace-nowrap min-w-fit">
                 {subtask.progressPercentage}%
               </span>
             </div>
@@ -116,7 +116,13 @@ export const SubtaskItem = ({ subtask, onUpdate }: SubtaskItemProps) => {
             )}
           </div>
 
-          <span className="text-gray-500 italic text-xs sm:text-right">{subtask.createdBy}</span>
+          {/* Author name - display at right on mobile, at right on desktop */}
+          <div className="flex sm:hidden justify-end">
+            <span className="text-gray-500 italic text-xs">{subtask.createdBy}</span>
+          </div>
+          <div className="hidden sm:flex justify-end">
+            <span className="text-gray-500 italic text-xs">{subtask.createdBy}</span>
+          </div>
         </div>
       </div>
 
