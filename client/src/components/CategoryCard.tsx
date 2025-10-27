@@ -78,9 +78,9 @@ export const CategoryCard = ({ category, onUpdate }: CategoryCardProps) => {
                 </h2>
                 <div className="mt-3 flex items-center gap-2 flex-wrap">
                   <div className="flex items-center gap-2 flex-shrink-0">
-                    <div className="w-[80px] bg-white/30 rounded-full h-2">
+                    <div className="w-[80px] sm:w-[120px] bg-white/30 rounded-full h-2 sm:h-3">
                       <div
-                        className="bg-white h-2 rounded-full transition-all duration-300"
+                        className="bg-white rounded-full transition-all duration-300 h-2 sm:h-3"
                         style={{ width: `${category.averageProgress}%` }}
                       />
                     </div>
