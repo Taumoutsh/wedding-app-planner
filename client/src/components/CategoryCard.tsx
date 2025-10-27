@@ -55,7 +55,7 @@ export const CategoryCard = ({ category, onUpdate }: CategoryCardProps) => {
   return (
     <>
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <div className="bg-gradient-to-r from-pink-500 to-purple-500 p-4">
+        <div className="bg-gradient-to-r from-[#F40E5E] to-[#FA8457] p-2 sm:p-4">
           <div className="flex justify-between items-start">
             <button
               onClick={toggleExpanded}
@@ -122,27 +122,27 @@ export const CategoryCard = ({ category, onUpdate }: CategoryCardProps) => {
         </div>
 
         {isExpanded && (
-          <div className="p-4 border-t border-gray-200">
+          <div className="p-2 sm:p-4 border-t border-gray-200">
             {!category.tasks || category.tasks.length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-gray-500 mb-3">{t('categoryCard.noTasks')}</p>
                 <button
                   onClick={() => setShowTaskModal(true)}
-                  className="px-4 py-2 bg-pink-500 text-white rounded-md hover:bg-pink-600 transition text-sm"
+                  className="px-3 sm:px-4 py-2 bg-[#F40E5E] text-white rounded-md hover:opacity-90 transition text-sm"
                 >
                   {t('categoryCard.addTask')}
                 </button>
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 sm:gap-4 mb-4">
                   {category.tasks.map((task) => (
                     <TaskCard key={task.id} task={task} onUpdate={onUpdate} />
                   ))}
                 </div>
                 <button
                   onClick={() => setShowTaskModal(true)}
-                  className="w-full px-4 py-2 border-2 border-dashed border-gray-300 text-gray-600 rounded-md hover:border-pink-500 hover:text-pink-500 transition"
+                  className="w-full px-3 sm:px-4 py-2 border-2 border-dashed border-gray-300 text-gray-600 rounded-md hover:border-[#F40E5E] hover:text-[#F40E5E] transition"
                 >
                   {t('categoryCard.addTask')}
                 </button>

@@ -103,7 +103,7 @@ export const TaskCard = ({ task, onUpdate }: TaskCardProps) => {
   return (
     <>
       <div className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition">
-        <div className="p-4 hover:bg-gray-50 transition">
+        <div className="p-2 sm:p-4 hover:bg-gray-50 transition">
           <button
             onClick={toggleExpanded}
             className="w-full flex justify-between items-start gap-2 mb-2"
@@ -179,7 +179,7 @@ export const TaskCard = ({ task, onUpdate }: TaskCardProps) => {
         </div>
 
         {isExpanded && (
-          <div className="border-t border-gray-200 p-4">
+          <div className="border-t border-gray-200 p-2 sm:p-4">
             <div className="space-y-2">
               {sortedSubtasks.length > 0 ? (
                 sortedSubtasks.map((subtask) => (
@@ -192,7 +192,7 @@ export const TaskCard = ({ task, onUpdate }: TaskCardProps) => {
 
             <button
               onClick={() => setShowSubtaskModal(true)}
-              className="w-full mt-3 px-3 py-1.5 border border-dashed border-gray-300 text-gray-600 rounded text-sm hover:border-pink-500 hover:text-pink-500 transition"
+              className="w-full mt-3 px-3 py-1.5 border border-dashed border-gray-300 text-gray-600 rounded text-sm hover:border-[#F40E5E] hover:text-[#F40E5E] transition"
             >
               {t('taskCard.addSubtask')}
             </button>

@@ -85,7 +85,7 @@ export const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <header className="bg-gradient-to-r from-pink-500 to-purple-500 shadow-lg sticky top-0 z-10 transition-all duration-300">
+      <header className="bg-gradient-to-r from-[#EB9E6C] via-[#F40E5E] to-[#FA8457] shadow-lg sticky top-0 z-10 transition-all duration-300">
         <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-300 ${isScrolled ? 'py-2 sm:py-3' : 'py-6'}`}>
           {/* Title section - hidden on mobile when scrolled */}
           {!isScrolled && (
@@ -211,19 +211,19 @@ export const Dashboard = () => {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
+      <main className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-8 relative">
         {categories.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-gray-600 mb-4">{t('dashboard.noCategoriesEmpty')}</p>
             <button
               onClick={() => setShowCategoryModal(true)}
-              className="px-6 py-3 bg-pink-500 text-white rounded-md hover:bg-pink-600 transition"
+              className="px-6 py-3 bg-[#F40E5E] text-white rounded-md hover:opacity-90 transition"
             >
               {t('dashboard.createCategory')}
             </button>
           </div>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-3 sm:space-y-6">
             {categories.map((category) => (
               <CategoryCard
                 key={category.id}
@@ -233,10 +233,10 @@ export const Dashboard = () => {
             ))}
 
             {/* Add category button below the last category */}
-            <div className="flex justify-center pt-4">
+            <div className="flex justify-center pt-2 sm:pt-4">
               <button
                 onClick={() => setShowCategoryModal(true)}
-                className="px-6 py-3 bg-pink-500 text-white rounded-md hover:bg-pink-600 transition font-semibold shadow-md"
+                className="px-4 sm:px-6 py-2 sm:py-3 bg-[#F40E5E] text-white rounded-md hover:opacity-90 transition font-semibold shadow-md text-sm sm:text-base"
               >
                 {t('dashboard.addCategory')}
               </button>
