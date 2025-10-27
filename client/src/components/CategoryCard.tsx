@@ -76,22 +76,22 @@ export const CategoryCard = ({ category, onUpdate }: CategoryCardProps) => {
                 <h2 className="text-xl sm:text-2xl font-bold text-white">
                   {category.name}
                 </h2>
-                <div className="mt-3 flex flex-col sm:flex-row sm:items-center gap-2">
-                  <div className="flex items-center gap-2 flex-1">
-                    <div className="flex-1 bg-white/30 rounded-full h-2">
+                <div className="mt-3 flex items-center gap-2 flex-wrap">
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                    <div className="flex-1 bg-white/30 rounded-full h-2 min-w-0">
                       <div
                         className="bg-white h-2 rounded-full transition-all duration-300"
                         style={{ width: `${category.averageProgress}%` }}
                       />
                     </div>
-                    <span className="text-xs sm:text-sm font-semibold text-white min-w-fit">
+                    <span className="text-xs sm:text-sm font-semibold text-white whitespace-nowrap">
                       {category.averageProgress.toFixed(1)}%
                     </span>
                   </div>
                   {category.totalPrice > 0 && (
                     <>
-                      <div className="hidden sm:block w-px h-5 bg-white/30"></div>
-                      <div className="flex items-center gap-1.5 text-xs sm:text-sm">
+                      <div className="w-px h-5 bg-white/30"></div>
+                      <div className="flex items-center gap-1.5 text-xs sm:text-sm whitespace-nowrap">
                         <span className="text-white/80">💰</span>
                         <span className="font-semibold text-white">
                           {category.totalPrice.toFixed(2)}€
