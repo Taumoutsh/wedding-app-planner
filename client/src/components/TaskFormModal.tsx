@@ -80,7 +80,7 @@ export const TaskFormModal = ({
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#F40E5E]"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D97B8A]"
             required
             autoFocus
           />
@@ -94,7 +94,7 @@ export const TaskFormModal = ({
             id="comment"
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#F40E5E]"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D97B8A]"
             rows={3}
           />
         </div>
@@ -110,7 +110,7 @@ export const TaskFormModal = ({
           </button>
           <button
             type="submit"
-            className="px-4 py-2 bg-[#F40E5E] text-white rounded-md hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 bg-[#D97B8A] text-white rounded-md hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={loading}
           >
             {loading ? t('taskFormModal.saving') : task ? t('taskFormModal.update') : t('taskFormModal.create')}

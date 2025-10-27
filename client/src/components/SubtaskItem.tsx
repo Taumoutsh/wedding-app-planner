@@ -45,8 +45,8 @@ export const SubtaskItem = ({ subtask, onUpdate }: SubtaskItemProps) => {
 
   return (
     <>
-      <div className={`bg-orange-50 rounded p-2 sm:p-3 text-xs hover:bg-orange-100 transition ${isPastDue ? 'opacity-40' : ''}`}>
-        <div className="bg-orange-100 -mx-2 sm:-mx-3 -mt-2 sm:-mt-3 px-2 sm:px-3 py-1.5 sm:py-2 rounded-t flex items-start gap-2 mb-2">
+      <div className={`bg-pink-50 rounded p-2 sm:p-3 text-xs hover:bg-pink-100 transition ${isPastDue ? 'opacity-40' : ''}`}>
+        <div className="bg-pink-100 -mx-2 sm:-mx-3 -mt-2 sm:-mt-3 px-2 sm:px-3 py-1.5 sm:py-2 rounded-t flex items-start gap-2 mb-2">
           <div className="flex-1">
             <h4 className="font-semibold text-gray-900">{subtask.title}</h4>
           </div>
@@ -81,7 +81,7 @@ export const SubtaskItem = ({ subtask, onUpdate }: SubtaskItemProps) => {
           <div className="flex items-center gap-2 flex-wrap">
             {/* Progress bar and percentage - fixed width */}
             <div className="flex items-center gap-1.5 flex-shrink-0">
-              <div className="w-[50px] bg-orange-200 rounded-full h-1.5">
+              <div className="w-[50px] bg-pink-200 rounded-full h-1.5">
                 <div
                   className={`h-1.5 rounded-full transition-all duration-300 ${getProgressColor(subtask.progressPercentage)}`}
                   style={{ width: `${subtask.progressPercentage}%` }}

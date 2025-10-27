@@ -55,7 +55,7 @@ export const CategoryCard = ({ category, onUpdate }: CategoryCardProps) => {
   return (
     <>
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <div className="bg-gradient-to-r from-[#F40E5E] to-[#FA8457] p-2 sm:p-4">
+        <div className="bg-gradient-to-r from-[#D97B8A] to-[#E8B4A1] p-2 sm:p-4">
           <div className="flex justify-between items-start">
             <button
               onClick={toggleExpanded}
@@ -129,7 +129,7 @@ export const CategoryCard = ({ category, onUpdate }: CategoryCardProps) => {
                 <p className="text-gray-500 mb-3">{t('categoryCard.noTasks')}</p>
                 <button
                   onClick={() => setShowTaskModal(true)}
-                  className="px-3 sm:px-4 py-2 bg-[#F40E5E] text-white rounded-md hover:opacity-90 transition text-sm"
+                  className="px-3 sm:px-4 py-2 bg-[#D97B8A] text-white rounded-md hover:opacity-90 transition text-sm"
                 >
                   {t('categoryCard.addTask')}
                 </button>
@@ -143,7 +143,7 @@ export const CategoryCard = ({ category, onUpdate }: CategoryCardProps) => {
                 </div>
                 <button
                   onClick={() => setShowTaskModal(true)}
-                  className="w-full px-3 sm:px-4 py-2 border-2 border-dashed border-gray-300 text-gray-600 rounded-md hover:border-[#F40E5E] hover:text-[#F40E5E] transition"
+                  className="w-full px-3 sm:px-4 py-2 border-2 border-dashed border-gray-300 text-gray-600 rounded-md hover:border-[#D97B8A] hover:text-[#D97B8A] transition"
                 >
                   {t('categoryCard.addTask')}
                 </button>
