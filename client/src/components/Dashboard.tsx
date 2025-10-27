@@ -16,10 +16,26 @@ export const Dashboard = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      const isMobile = window.innerWidth < 640; // sm breakpoint
+
+      if (isMobile) {
+        // On mobile: always show scrolled state (collapsed header)
+        setIsScrolled(true);
+      } else {
+        // On desktop: show scrolled state when scrolling down
+        setIsScrolled(window.scrollY > 0);
+      }
     };
+
+    // Set initial state
+    setIsScrolled(window.innerWidth < 640);
+
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('resize', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
   }, []);
 
   const loadCategories = async () => {
@@ -84,9 +100,12 @@ export const Dashboard = () => {
               </div>
               <button
                 onClick={logout}
-                className="px-3 sm:px-4 py-2 text-xs sm:text-sm text-pink-500 hover:text-pink-700 bg-white hover:bg-pink-50 border border-white rounded-md transition font-medium"
+                className="p-2 text-white hover:bg-white/20 rounded-md transition"
+                title={t('dashboard.logout')}
               >
-                {t('dashboard.logout')}
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
               </button>
             </div>
           )}
@@ -97,62 +116,96 @@ export const Dashboard = () => {
               <h1 className="text-lg font-bold text-white">{t('dashboard.heading')}</h1>
               <button
                 onClick={logout}
-                className="px-2 py-1 text-xs text-pink-500 hover:text-pink-700 bg-white hover:bg-pink-50 border border-white rounded transition font-medium"
+                className="p-2 text-white hover:bg-white/20 rounded-md transition"
+                title={t('dashboard.logout')}
               >
-                {t('dashboard.logout')}
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
               </button>
             </div>
           )}
 
           {/* Stats section - grid layout changes based on scroll state */}
-          <div className={`grid items-center ${isScrolled ? 'grid-cols-3 gap-1 sm:grid-cols-4 sm:gap-2' : 'grid-cols-1 sm:grid-cols-3 gap-4'}`}>
-            {/* Progress section */}
-            <div className={`flex ${isScrolled ? 'col-span-1' : 'col-span-2 sm:col-span-1'} ${isScrolled ? 'gap-1' : 'flex-col gap-3'}`}>
-              <div className={`flex ${isScrolled ? 'items-center gap-1' : 'flex-col sm:flex-row sm:items-center gap-2'} min-w-0`}>
-                <span className={`font-semibold text-pink-100 whitespace-nowrap ${isScrolled ? 'text-xs hidden sm:inline' : 'text-xs sm:text-sm'}`}>
-                  {t('dashboard.overallProgress')}
-                </span>
-                <div className={`flex items-center ${isScrolled ? 'gap-1' : 'gap-2'} flex-1 min-w-0`}>
+          <div className={`grid items-center ${isScrolled ? 'grid-cols-12 gap-2' : 'grid-cols-1 sm:grid-cols-3 gap-4'}`}>
+            {isScrolled ? (
+              <>
+                {/* Progress bar section - 4 columns */}
+                <div className="col-span-4 flex items-center gap-2 min-w-0">
                   <div className="flex-1 bg-white/30 rounded-full h-2 min-w-0">
                     <div
                       className="bg-white h-2 rounded-full transition-all duration-300"
                       style={{ width: `${overallProgress()}%` }}
                     />
                   </div>
-                  <span className={`font-bold text-white min-w-fit ${isScrolled ? 'text-xs' : 'text-xs sm:text-sm min-w-[3.5rem]'}`}>
+                  <span className="font-bold text-white text-xs min-w-fit">
                     {overallProgress().toFixed(1)}%
                   </span>
                 </div>
-              </div>
-            </div>
 
-            {/* Budget - always visible, shown on all states */}
-            <div className={`flex col-span-1 items-center gap-1 sm:gap-2 min-w-0`}>
-              <span className={`font-semibold text-pink-100 whitespace-nowrap ${isScrolled ? 'text-xs' : 'text-xs sm:text-sm'}`}>
-                {!isScrolled && t('dashboard.totalBudget')}
-              </span>
-              <span className={`font-bold text-white truncate ${isScrolled ? 'text-xs' : 'text-xs sm:text-sm'}`}>
-                {totalBudget().toFixed(2)}€
-              </span>
-            </div>
+                {/* Separator */}
+                <div className="col-span-1 flex items-center justify-center">
+                  <div className="h-4 w-px bg-white/30"></div>
+                </div>
 
-            {/* Add button */}
-            <button
-              onClick={() => setShowCategoryModal(true)}
-              className={`bg-white text-pink-600 hover:bg-pink-50 rounded-md transition font-semibold shadow-md col-span-1 ${isScrolled ? 'px-1.5 sm:px-2 py-1 text-xs' : 'px-4 py-2 text-sm sm:text-base h-fit sm:h-auto'}`}
-            >
-              <span className="hidden sm:inline">{t('dashboard.addCategory')}</span>
-              <span className="inline sm:hidden">{isScrolled ? '+' : t('dashboard.addCategoryMobile')}</span>
-            </button>
+                {/* Budget - 5 columns */}
+                <div className="col-span-5 flex items-center gap-1 min-w-0">
+                  <span className="font-bold text-white text-xs truncate">
+                    {totalBudget().toFixed(2)}€
+                  </span>
+                </div>
 
-            {/* Logout button - shown on scrolled state desktop only */}
-            {isScrolled && (
-              <button
-                onClick={logout}
-                className="hidden sm:block px-3 py-1 text-xs text-pink-500 hover:text-pink-700 bg-white hover:bg-pink-50 border border-white rounded transition font-medium col-span-1"
-              >
-                {t('dashboard.logout')}
-              </button>
+                {/* Spacer to push logout to the right */}
+                <div className="col-span-1"></div>
+
+                {/* Logout button - 1 column, pushed to right */}
+                <button
+                  onClick={logout}
+                  className="hidden sm:flex items-center justify-center p-1.5 text-white hover:bg-white/20 rounded-md transition col-span-1"
+                  title={t('dashboard.logout')}
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                </button>
+              </>
+            ) : (
+              <>
+                {/* Progress section - full width on non-scrolled */}
+                <div className="col-span-1 sm:col-span-1 flex flex-col gap-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 min-w-0">
+                    <span className="font-semibold text-pink-100 whitespace-nowrap text-xs sm:text-sm">
+                      {t('dashboard.overallProgress')}
+                    </span>
+                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                      <div className="flex-1 bg-white/30 rounded-full h-2 min-w-0">
+                        <div
+                          className="bg-white h-2 rounded-full transition-all duration-300"
+                          style={{ width: `${overallProgress()}%` }}
+                        />
+                      </div>
+                      <span className="font-bold text-white min-w-fit text-xs sm:text-sm min-w-[3.5rem]">
+                        {overallProgress().toFixed(1)}%
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Separator - non-scrolled */}
+                <div className="col-span-1 sm:col-span-1 flex items-center justify-center">
+                  <div className="h-6 w-px bg-white/30"></div>
+                </div>
+
+                {/* Budget section - non-scrolled */}
+                <div className="col-span-1 sm:col-span-1 flex items-center gap-1 sm:gap-2 min-w-0">
+                  <span className="font-semibold text-pink-100 whitespace-nowrap text-xs sm:text-sm">
+                    {t('dashboard.totalBudget')}
+                  </span>
+                  <span className="font-bold text-white truncate text-xs sm:text-sm">
+                    {totalBudget().toFixed(2)}€
+                  </span>
+                </div>
+              </>
             )}
           </div>
         </div>
@@ -178,6 +231,16 @@ export const Dashboard = () => {
                 onUpdate={loadCategories}
               />
             ))}
+
+            {/* Add category button below the last category */}
+            <div className="flex justify-center pt-4">
+              <button
+                onClick={() => setShowCategoryModal(true)}
+                className="px-6 py-3 bg-pink-500 text-white rounded-md hover:bg-pink-600 transition font-semibold shadow-md"
+              >
+                {t('dashboard.addCategory')}
+              </button>
+            </div>
           </div>
         )}
       </main>
