@@ -45,8 +45,8 @@ export const SubtaskItem = ({ subtask, onUpdate }: SubtaskItemProps) => {
 
   return (
     <>
-      <div className={`bg-pink-50 rounded p-3 text-xs hover:bg-pink-100 transition ${isPastDue ? 'opacity-50' : ''}`}>
-        <div className="bg-pink-200 -mx-3 -mt-3 px-3 py-2 rounded-t flex items-start gap-2 mb-2">
+      <div className={`bg-orange-50 rounded p-2 sm:p-3 text-xs hover:bg-orange-100 transition ${isPastDue ? 'opacity-40' : ''}`}>
+        <div className="bg-orange-100 -mx-2 sm:-mx-3 -mt-2 sm:-mt-3 px-2 sm:px-3 py-1.5 sm:py-2 rounded-t flex items-start gap-2 mb-2">
           <div className="flex-1">
             <h4 className="font-semibold text-gray-900">{subtask.title}</h4>
           </div>
@@ -76,42 +76,53 @@ export const SubtaskItem = ({ subtask, onUpdate }: SubtaskItemProps) => {
           <p className="text-gray-600 mb-2">{subtask.comment}</p>
         )}
 
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3">
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
-            <div className="flex items-center gap-1.5 min-w-[90px]">
-              <div className="flex-1 bg-pink-200 rounded-full h-1.5 max-w-[80px]">
+        <div className="flex flex-col gap-2">
+          {/* Progress, date, and budget on one line */}
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* Progress bar and percentage - fixed width */}
+            <div className="flex items-center gap-1.5 flex-shrink-0">
+              <div className="w-[50px] bg-orange-200 rounded-full h-1.5">
                 <div
                   className={`h-1.5 rounded-full transition-all duration-300 ${getProgressColor(subtask.progressPercentage)}`}
                   style={{ width: `${subtask.progressPercentage}%` }}
                 />
               </div>
-              <span className="text-xs font-semibold text-gray-900 min-w-[2.5rem] text-center">
+              <span className="text-xs font-semibold text-gray-900 whitespace-nowrap">
                 {subtask.progressPercentage}%
               </span>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-              {subtask.date && (
-                <div className="flex items-center gap-1.5">
-                  <span className="text-gray-500 text-xs hidden sm:inline">{t('subtaskItem.dateLabel')}</span>
-                  <span className="font-semibold text-gray-900 text-xs">
-                    {formatDate(subtask.date)}
-                  </span>
-                </div>
-              )}
+            {/* Separator and date */}
+            {subtask.date && (
+              <>
+                <div className="w-px h-4 bg-gray-300"></div>
+                <span className="font-semibold text-gray-900 text-xs whitespace-nowrap">
+                  {formatDate(subtask.date)}
+                </span>
+              </>
+            )}
 
-              {subtask.price && (
+            {/* Separator and budget */}
+            {subtask.price && (
+              <>
+                <div className="w-px h-4 bg-gray-300"></div>
                 <div className="flex items-center gap-1.5">
                   <span className="text-gray-500 text-xs">💰</span>
-                  <span className="font-semibold text-gray-900 text-xs">
+                  <span className="font-semibold text-gray-900 text-xs whitespace-nowrap">
                     {subtask.price.toFixed(2)}€
                   </span>
                 </div>
-              )}
-            </div>
+              </>
+            )}
           </div>
 
-          <span className="text-gray-500 italic text-xs sm:text-right">{subtask.createdBy}</span>
+          {/* Author name - display at right on mobile, at right on desktop */}
+          <div className="flex sm:hidden justify-end">
+            <span className="text-gray-500 italic text-xs">{subtask.createdBy}</span>
+          </div>
+          <div className="hidden sm:flex justify-end">
+            <span className="text-gray-500 italic text-xs">{subtask.createdBy}</span>
+          </div>
         </div>
       </div>
 

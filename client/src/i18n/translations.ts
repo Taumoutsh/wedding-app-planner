@@ -2,8 +2,7 @@ export const translations = {
   en: {
     // LoginForm
     loginForm: {
-      heading: 'Wedding Planner',
-      subheading: 'Sign in to continue',
+      heading: 'Mariage Tomarea 💍',
       username: 'Username',
       password: 'Password',
       signingIn: 'Signing in...',
@@ -13,7 +12,7 @@ export const translations = {
 
     // Dashboard
     dashboard: {
-      heading: 'Wedding Planner',
+      heading: 'Mariage Tomarea 💍',
       welcome: 'Welcome, {username}',
       logout: 'Logout',
       overallProgress: 'Overall Progress:',
@@ -27,6 +26,8 @@ export const translations = {
 
     // CategoryCard
     categoryCard: {
+      expand: 'Expand category',
+      collapse: 'Collapse category',
       editCategory: 'Edit category',
       deleteCategory: 'Delete category',
       noTasks: 'No tasks yet',
@@ -49,6 +50,8 @@ export const translations = {
 
     // TaskCard
     taskCard: {
+      expand: 'Expand task',
+      collapse: 'Collapse task',
       editTask: 'Edit task',
       deleteTask: 'Delete task',
       noSubtasks: 'No subtasks yet',
@@ -107,18 +110,17 @@ export const translations = {
   fr: {
     // LoginForm
     loginForm: {
-      heading: 'Planificateur de Mariage',
-      subheading: 'Connectez-vous pour continuer',
+      heading: 'Mariage Tomarea 💍',
       username: 'Nom d\'utilisateur',
       password: 'Mot de passe',
       signingIn: 'Connexion en cours...',
-      signIn: 'Se Connecter',
+      signIn: 'Se connecter',
       loginFailed: 'Échec de la connexion',
     },
 
     // Dashboard
     dashboard: {
-      heading: 'Planificateur de Mariage',
+      heading: 'Mariage Tomarea 💍',
       welcome: 'Bienvenue, {username}',
       logout: 'Déconnexion',
       overallProgress: 'Progression globale :',
@@ -132,6 +134,8 @@ export const translations = {
 
     // CategoryCard
     categoryCard: {
+      expand: 'Déplier la catégorie',
+      collapse: 'Replier la catégorie',
       editCategory: 'Modifier la catégorie',
       deleteCategory: 'Supprimer la catégorie',
       noTasks: 'Aucune tâche pour le moment',
@@ -154,6 +158,8 @@ export const translations = {
 
     // TaskCard
     taskCard: {
+      expand: 'Déplier la tâche',
+      collapse: 'Replier la tâche',
       editTask: 'Modifier la tâche',
       deleteTask: 'Supprimer la tâche',
       noSubtasks: 'Aucune sous-tâche pour le moment',

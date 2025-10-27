@@ -27,12 +27,11 @@ export const LoginForm = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-100 to-purple-100 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#EB9E6C] via-[#FB7FA0] to-[#F40E5E] px-4">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h1 className="text-3xl font-bold text-center mb-2 text-gray-800">
+        <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">
           {t('loginForm.heading')}
         </h1>
-        <p className="text-center text-gray-600 mb-8">{t('loginForm.subheading')}</p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
@@ -50,7 +49,7 @@ export const LoginForm = () => {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#F40E5E]"
               required
               autoFocus
             />
@@ -65,7 +64,7 @@ export const LoginForm = () => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#F40E5E]"
               required
             />
           </div>
@@ -73,7 +72,7 @@ export const LoginForm = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-pink-500 text-white py-2 px-4 rounded-md hover:bg-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition"
+            className="w-full bg-[#F40E5E] text-white py-2 px-4 rounded-md hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#F40E5E] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition"
           >
             {loading ? t('loginForm.signingIn') : t('loginForm.signIn')}
           </button>
