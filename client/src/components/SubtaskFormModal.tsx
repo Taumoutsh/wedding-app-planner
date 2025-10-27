@@ -99,7 +99,7 @@ export const SubtaskFormModal = ({
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#F40E5E]"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D97B8A]"
             required
             autoFocus
           />
@@ -113,7 +113,7 @@ export const SubtaskFormModal = ({
             id="comment"
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#F40E5E]"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D97B8A]"
             rows={2}
           />
         </div>
@@ -162,7 +162,7 @@ export const SubtaskFormModal = ({
               max="100"
               value={progressPercentage}
               onChange={(e) => setProgressPercentage(parseInt(e.target.value) || 0)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#F40E5E]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D97B8A]"
               required
             />
           </div>
@@ -177,7 +177,7 @@ export const SubtaskFormModal = ({
               min="1"
               value={weight}
               onChange={(e) => setWeight(parseInt(e.target.value) || 1)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#F40E5E]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D97B8A]"
               required
             />
           </div>
@@ -193,7 +193,7 @@ export const SubtaskFormModal = ({
               step="0.01"
               value={price || ''}
               onChange={(e) => setPrice(e.target.value ? parseFloat(e.target.value) : null)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#F40E5E]"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D97B8A]"
             />
           </div>
         </div>
@@ -209,7 +209,7 @@ export const SubtaskFormModal = ({
           </button>
           <button
             type="submit"
-            className="px-4 py-2 bg-[#F40E5E] text-white rounded-md hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 bg-[#D97B8A] text-white rounded-md hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={loading}
           >
             {loading ? t('subtaskFormModal.saving') : subtask ? t('subtaskFormModal.update') : t('subtaskFormModal.create')}

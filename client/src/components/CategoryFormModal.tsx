@@ -74,7 +74,7 @@ export const CategoryFormModal = ({
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#F40E5E]"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D97B8A]"
             required
             autoFocus
           />
@@ -91,7 +91,7 @@ export const CategoryFormModal = ({
           </button>
           <button
             type="submit"
-            className="px-4 py-2 bg-[#F40E5E] text-white rounded-md hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 bg-[#D97B8A] text-white rounded-md hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={loading}
           >
             {loading ? t('categoryFormModal.saving') : category ? t('categoryFormModal.update') : t('categoryFormModal.create')}

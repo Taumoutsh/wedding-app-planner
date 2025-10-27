@@ -193,7 +193,7 @@ export const TaskCard = ({ task, onUpdate }: TaskCardProps) => {
 
             <button
               onClick={() => setShowSubtaskModal(true)}
-              className="w-full mt-3 px-3 py-1.5 border border-dashed border-gray-300 text-gray-600 rounded text-sm hover:border-[#F40E5E] hover:text-[#F40E5E] transition"
+              className="w-full mt-3 px-3 py-1.5 border border-dashed border-gray-300 text-gray-600 rounded text-sm hover:border-[#D97B8A] hover:text-[#D97B8A] transition"
             >
               {t('taskCard.addSubtask')}
             </button>
