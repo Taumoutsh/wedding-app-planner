@@ -88,17 +88,13 @@ export const CategoryCard = ({ category, onUpdate }: CategoryCardProps) => {
                       {category.averageProgress.toFixed(1)}%
                     </span>
                   </div>
-                  {category.totalPrice > 0 && (
-                    <>
-                      <div className="w-px h-5 bg-white/30"></div>
-                      <div className="flex items-center gap-1.5 text-xs sm:text-sm whitespace-nowrap">
-                        <span className="text-white/80">💰</span>
-                        <span className="font-semibold text-white">
-                          {category.totalPrice.toFixed(2)}€
-                        </span>
-                      </div>
-                    </>
-                  )}
+                  <div className="w-px h-5 bg-white/30"></div>
+                  <div className="flex items-center gap-1.5 text-xs sm:text-sm whitespace-nowrap">
+                    <span className="text-white/80">💰</span>
+                    <span className="font-semibold text-white">
+                      {(category.totalPrice || 0).toFixed(2)}€
+                    </span>
+                  </div>
                 </div>
               </div>
             </button>

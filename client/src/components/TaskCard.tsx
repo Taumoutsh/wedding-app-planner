@@ -169,17 +169,13 @@ export const TaskCard = ({ task, onUpdate }: TaskCardProps) => {
                 {task.averageProgress.toFixed(1)}%
               </span>
             </div>
-            {task.totalPrice > 0 && (
-              <>
-                <div className="w-px h-5 bg-gray-300"></div>
-                <div className="flex items-center gap-1.5 text-xs whitespace-nowrap">
-                  <span className="text-gray-500">💰</span>
-                  <span className="font-semibold text-gray-800">
-                    {task.totalPrice.toFixed(2)}€
-                  </span>
-                </div>
-              </>
-            )}
+            <div className="w-px h-5 bg-gray-300"></div>
+            <div className="flex items-center gap-1.5 text-xs whitespace-nowrap">
+              <span className="text-gray-500">💰</span>
+              <span className="font-semibold text-gray-800">
+                {(task.totalPrice || 0).toFixed(2)}€
+              </span>
+            </div>
           </div>
         </div>
 
