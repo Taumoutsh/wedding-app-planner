@@ -45,15 +45,15 @@ export const SubtaskItem = ({ subtask, onUpdate }: SubtaskItemProps) => {
 
   return (
     <>
-      <div className={`bg-pink-50 rounded p-2 sm:p-3 text-xs hover:bg-pink-100 transition ${isPastDue ? 'opacity-40' : ''}`}>
-        <div className="bg-pink-100 -mx-2 sm:-mx-3 -mt-2 sm:-mt-3 px-2 sm:px-3 py-1.5 sm:py-2 rounded-t flex items-start gap-2 mb-2">
+      <div className={`bg-gradient-to-r from-[#F5E6E8] to-[#F9EDE8] rounded p-2 sm:p-3 text-xs hover:from-[#F0DDE0] hover:to-[#F5E5DF] transition ${isPastDue ? 'opacity-40' : ''}`}>
+        <div className="bg-gradient-to-r from-[#D97B8A] to-[#E8B4A1] -mx-2 sm:-mx-3 -mt-2 sm:-mt-3 px-2 sm:px-3 py-1.5 sm:py-2 rounded-t flex items-start gap-2 mb-2">
           <div className="flex-1">
-            <h4 className="font-semibold text-gray-900">{subtask.title}</h4>
+            <h4 className="font-semibold text-white">{subtask.title}</h4>
           </div>
           <div className="flex gap-1">
             <button
               onClick={() => setShowEditModal(true)}
-              className="p-1 text-gray-600 hover:text-gray-900 rounded transition"
+              className="p-1 text-white hover:text-gray-100 rounded transition"
               title={t('subtaskItem.editSubtask')}
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -62,7 +62,7 @@ export const SubtaskItem = ({ subtask, onUpdate }: SubtaskItemProps) => {
             </button>
             <button
               onClick={() => setShowDeleteDialog(true)}
-              className="p-1 text-gray-600 hover:text-red-700 rounded transition"
+              className="p-1 text-white hover:text-red-100 rounded transition"
               title={t('subtaskItem.deleteSubtask')}
             >
               <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -73,7 +73,23 @@ export const SubtaskItem = ({ subtask, onUpdate }: SubtaskItemProps) => {
         </div>
 
         {subtask.comment && (
-          <p className="text-gray-600 mb-2">{subtask.comment}</p>
+          <p className="text-gray-600 mb-2 whitespace-pre-wrap">{subtask.comment}</p>
+        )}
+
+        {subtask.link && (
+          <div className="mb-2">
+            <a
+              href={subtask.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-[#D97B8A] hover:text-[#C06B7A] underline text-xs"
+            >
+              <svg className="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+              <span>{t('subtaskItem.linkLabel')}</span>
+            </a>
+          </div>
         )}
 
         <div className="flex flex-col gap-2">
@@ -81,7 +97,7 @@ export const SubtaskItem = ({ subtask, onUpdate }: SubtaskItemProps) => {
           <div className="flex items-center gap-2 flex-wrap">
             {/* Progress bar and percentage - fixed width */}
             <div className="flex items-center gap-1.5 flex-shrink-0">
-              <div className="w-[50px] bg-pink-200 rounded-full h-1.5">
+              <div className="w-[50px] bg-[#F0DDE0] rounded-full h-1.5">
                 <div
                   className={`h-1.5 rounded-full transition-all duration-300 ${getProgressColor(subtask.progressPercentage)}`}
                   style={{ width: `${subtask.progressPercentage}%` }}
@@ -114,14 +130,6 @@ export const SubtaskItem = ({ subtask, onUpdate }: SubtaskItemProps) => {
                 </div>
               </>
             )}
-          </div>
-
-          {/* Author name - display at right on mobile, at right on desktop */}
-          <div className="flex sm:hidden justify-end">
-            <span className="text-gray-500 italic text-xs">{subtask.createdBy}</span>
-          </div>
-          <div className="hidden sm:flex justify-end">
-            <span className="text-gray-500 italic text-xs">{subtask.createdBy}</span>
           </div>
         </div>
       </div>

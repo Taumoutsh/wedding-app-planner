@@ -49,6 +49,9 @@ model Subtask {
   progressPercentage Int       @default(0)
   weight             Int       @default(1)
   price              Float?
+  link               String?
+  urgent             Boolean   @default(false)
+  important          Boolean   @default(false)
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
   task               Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)

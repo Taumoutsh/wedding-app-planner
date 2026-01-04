@@ -84,6 +84,9 @@ export const translations = {
       progress: 'Progress (%)',
       weight: 'Weight',
       price: 'Price (Optional)',
+      link: 'Link (Optional)',
+      urgent: 'Urgent',
+      important: 'Important',
       cancel: 'Cancel',
       saving: 'Saving...',
       update: 'Update',
@@ -96,6 +99,7 @@ export const translations = {
       editSubtask: 'Edit subtask',
       deleteSubtask: 'Delete subtask',
       dateLabel: 'Date:',
+      linkLabel: 'Link',
       deleteTitle: 'Delete Subtask',
       deleteMessage: 'Are you sure you want to delete "{title}"?',
     },
@@ -104,6 +108,22 @@ export const translations = {
     confirmDialog: {
       delete: 'Delete',
       cancel: 'Cancel',
+    },
+
+    // Eisenhower Matrix
+    eisenhowerMatrix: {
+      title: 'Eisenhower Matrix',
+      urgentImportant: 'Urgent & Important',
+      urgentImportantDesc: 'Do First',
+      notUrgentImportant: 'Not Urgent & Important',
+      notUrgentImportantDesc: 'Schedule',
+      urgentNotImportant: 'Urgent & Not Important',
+      urgentNotImportantDesc: 'Delegate',
+      notUrgentNotImportant: 'Not Urgent & Not Important',
+      notUrgentNotImportantDesc: 'Eliminate',
+      noSubtasks: 'No subtasks in this category',
+      viewStandard: 'Standard View',
+      viewMatrix: 'Matrix View',
     },
   },
 
@@ -192,6 +212,9 @@ export const translations = {
       progress: 'Progression (%)',
       weight: 'Poids',
       price: 'Prix (Optionnel)',
+      link: 'Lien (Optionnel)',
+      urgent: 'Urgent',
+      important: 'Important',
       cancel: 'Annuler',
       saving: 'Enregistrement...',
       update: 'Mettre à jour',
@@ -204,6 +227,7 @@ export const translations = {
       editSubtask: 'Modifier la sous-tâche',
       deleteSubtask: 'Supprimer la sous-tâche',
       dateLabel: 'Date :',
+      linkLabel: 'Lien',
       deleteTitle: 'Supprimer la sous-tâche',
       deleteMessage: 'Êtes-vous sûr de vouloir supprimer « {title} » ?',
     },
@@ -212,6 +236,22 @@ export const translations = {
     confirmDialog: {
       delete: 'Supprimer',
       cancel: 'Annuler',
+    },
+
+    // Eisenhower Matrix
+    eisenhowerMatrix: {
+      title: 'Matrice d\'Eisenhower',
+      urgentImportant: 'Urgent & Important',
+      urgentImportantDesc: 'Faire en premier',
+      notUrgentImportant: 'Non urgent & Important',
+      notUrgentImportantDesc: 'Planifier',
+      urgentNotImportant: 'Urgent & Non important',
+      urgentNotImportantDesc: 'Déléguer',
+      notUrgentNotImportant: 'Non urgent & Non important',
+      notUrgentNotImportantDesc: 'Éliminer',
+      noSubtasks: 'Aucune sous-tâche dans cette catégorie',
+      viewStandard: 'Vue standard',
+      viewMatrix: 'Vue matrice',
     },
   },
 } as const;

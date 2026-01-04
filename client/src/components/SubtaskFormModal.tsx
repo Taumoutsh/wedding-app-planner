@@ -26,6 +26,9 @@ export const SubtaskFormModal = ({
   const [progressPercentage, setProgressPercentage] = useState(0);
   const [weight, setWeight] = useState(1);
   const [price, setPrice] = useState<number | null>(null);
+  const [link, setLink] = useState('');
+  const [urgent, setUrgent] = useState(false);
+  const [important, setImportant] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -37,6 +40,9 @@ export const SubtaskFormModal = ({
       setProgressPercentage(subtask.progressPercentage);
       setWeight(subtask.weight);
       setPrice(subtask.price || null);
+      setLink(subtask.link || '');
+      setUrgent(subtask.urgent);
+      setImportant(subtask.important);
     } else {
       setTitle('');
       setComment('');
@@ -44,6 +50,9 @@ export const SubtaskFormModal = ({
       setProgressPercentage(0);
       setWeight(1);
       setPrice(null);
+      setLink('');
+      setUrgent(false);
+      setImportant(false);
     }
     setError('');
   }, [subtask, isOpen]);
@@ -61,6 +70,9 @@ export const SubtaskFormModal = ({
         progressPercentage,
         weight,
         price: price || null,
+        link: link || null,
+        urgent,
+        important,
       };
 
       if (subtask) {
@@ -115,6 +127,20 @@ export const SubtaskFormModal = ({
             onChange={(e) => setComment(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D97B8A]"
             rows={2}
+          />
+        </div>
+
+        <div className="mb-4">
+          <label htmlFor="link" className="block text-sm font-medium text-gray-700 mb-1">
+            {t('subtaskFormModal.link')}
+          </label>
+          <input
+            id="link"
+            type="url"
+            value={link}
+            onChange={(e) => setLink(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D97B8A]"
+            placeholder="https://..."
           />
         </div>
 
@@ -196,6 +222,28 @@ export const SubtaskFormModal = ({
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D97B8A]"
             />
           </div>
+        </div>
+
+        <div className="flex gap-6 mb-4">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={urgent}
+              onChange={(e) => setUrgent(e.target.checked)}
+              className="w-4 h-4 text-[#D97B8A] border-gray-300 rounded focus:ring-2 focus:ring-[#D97B8A]"
+            />
+            <span className="text-sm font-medium text-gray-700">{t('subtaskFormModal.urgent')}</span>
+          </label>
+
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={important}
+              onChange={(e) => setImportant(e.target.checked)}
+              className="w-4 h-4 text-[#D97B8A] border-gray-300 rounded focus:ring-2 focus:ring-[#D97B8A]"
+            />
+            <span className="text-sm font-medium text-gray-700">{t('subtaskFormModal.important')}</span>
+          </label>
         </div>
 
         <div className="flex justify-end gap-2">
