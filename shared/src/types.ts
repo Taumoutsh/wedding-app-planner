@@ -36,6 +36,8 @@ export interface Subtask {
   weight: number;
   price?: number | null;
   link?: string | null;
+  urgent: boolean;
+  important: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -99,6 +101,8 @@ export interface CreateSubtaskRequest {
   weight: number;
   price?: number | null;
   link?: string | null;
+  urgent: boolean;
+  important: boolean;
 }
 
 export interface UpdateSubtaskRequest {
@@ -109,6 +113,8 @@ export interface UpdateSubtaskRequest {
   weight: number;
   price?: number | null;
   link?: string | null;
+  urgent: boolean;
+  important: boolean;
 }
 
 export interface ErrorResponse {

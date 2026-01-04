@@ -5,6 +5,8 @@ import { useTranslation } from '../i18n/useTranslation';
 import type { CategoryDTO } from '@wedding-planner/shared';
 import { CategoryCard } from './CategoryCard';
 import { CategoryFormModal } from './CategoryFormModal';
+import { EisenhowerMatrix } from './EisenhowerMatrix';
+import { SubtaskFormModal } from './SubtaskFormModal';
 
 export const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -13,6 +15,9 @@ export const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [viewMode, setViewMode] = useState<'standard' | 'matrix'>('standard');
+  const [editingSubtaskId, setEditingSubtaskId] = useState<number | null>(null);
+  const [editingTaskId, setEditingTaskId] = useState<number | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -75,6 +80,23 @@ export const Dashboard = () => {
     return Math.round(categories.reduce((sum, cat) => sum + (cat.totalPrice || 0), 0) * 100) / 100;
   };
 
+  const handleEditSubtask = (subtaskId: number, taskId: number) => {
+    setEditingSubtaskId(subtaskId);
+    setEditingTaskId(taskId);
+  };
+
+  const getEditingSubtask = () => {
+    if (!editingSubtaskId || !editingTaskId) return null;
+    for (const category of categories) {
+      for (const task of category.tasks || []) {
+        if (task.id === editingTaskId) {
+          return task.subtasks?.find((s) => s.id === editingSubtaskId);
+        }
+      }
+    }
+    return null;
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -97,6 +119,13 @@ export const Dashboard = () => {
                 <span className="text-sm sm:text-base text-white/90">{user?.username || ''}</span>
                 <div className="w-px h-5 sm:h-6 bg-white/30"></div>
                 <button
+                  onClick={() => setViewMode(viewMode === 'standard' ? 'matrix' : 'standard')}
+                  className="px-3 py-1.5 text-xs sm:text-sm text-white bg-white/10 hover:bg-white/20 rounded-md transition font-medium"
+                  title={viewMode === 'standard' ? t('eisenhowerMatrix.viewMatrix') : t('eisenhowerMatrix.viewStandard')}
+                >
+                  {viewMode === 'standard' ? t('eisenhowerMatrix.viewMatrix') : t('eisenhowerMatrix.viewStandard')}
+                </button>
+                <button
                   onClick={logout}
                   className="p-2 text-white hover:bg-white/20 rounded-md transition"
                   title={t('dashboard.logout')}
@@ -116,6 +145,13 @@ export const Dashboard = () => {
               <div className="flex items-center gap-1">
                 <span className="text-xs text-white/90">{user?.username || ''}</span>
                 <div className="w-px h-4 bg-white/30"></div>
+                <button
+                  onClick={() => setViewMode(viewMode === 'standard' ? 'matrix' : 'standard')}
+                  className="px-2 py-1 text-xs text-white bg-white/10 hover:bg-white/20 rounded-md transition font-medium"
+                  title={viewMode === 'standard' ? t('eisenhowerMatrix.viewMatrix') : t('eisenhowerMatrix.viewStandard')}
+                >
+                  {viewMode === 'standard' ? 'Matrix' : 'Standard'}
+                </button>
                 <button
                   onClick={logout}
                   className="p-2 text-white hover:bg-white/20 rounded-md transition"
@@ -225,6 +261,8 @@ export const Dashboard = () => {
               {t('dashboard.createCategory')}
             </button>
           </div>
+        ) : viewMode === 'matrix' ? (
+          <EisenhowerMatrix categories={categories} onEditSubtask={handleEditSubtask} />
         ) : (
           <div className="space-y-3 sm:space-y-6">
             {categories.map((category) => (
@@ -253,6 +291,23 @@ export const Dashboard = () => {
         onClose={() => setShowCategoryModal(false)}
         onSuccess={loadCategories}
       />
+
+      {editingSubtaskId && editingTaskId && (
+        <SubtaskFormModal
+          isOpen={true}
+          onClose={() => {
+            setEditingSubtaskId(null);
+            setEditingTaskId(null);
+          }}
+          onSuccess={() => {
+            loadCategories();
+            setEditingSubtaskId(null);
+            setEditingTaskId(null);
+          }}
+          taskId={editingTaskId}
+          subtask={getEditingSubtask() || undefined}
+        />
+      )}
     </div>
   );
 };
