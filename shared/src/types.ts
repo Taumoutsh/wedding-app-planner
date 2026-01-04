@@ -35,6 +35,7 @@ export interface Subtask {
   progressPercentage: number;
   weight: number;
   price?: number | null;
+  link?: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -97,6 +98,7 @@ export interface CreateSubtaskRequest {
   progressPercentage: number;
   weight: number;
   price?: number | null;
+  link?: string | null;
 }
 
 export interface UpdateSubtaskRequest {
@@ -106,6 +108,7 @@ export interface UpdateSubtaskRequest {
   progressPercentage: number;
   weight: number;
   price?: number | null;
+  link?: string | null;
 }
 
 export interface ErrorResponse {
