@@ -5,19 +5,16 @@ import { useTranslation } from '../i18n/useTranslation';
 import type { CategoryDTO } from '@wedding-planner/shared';
 import { CategoryCard } from './CategoryCard';
 import { CategoryFormModal } from './CategoryFormModal';
-import { EisenhowerMatrix } from './EisenhowerMatrix';
-import { SubtaskFormModal } from './SubtaskFormModal';
+import { exportToExcel } from '../utils/exportToExcel';
 
 export const Dashboard = () => {
   const { user, logout } = useAuth();
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [categories, setCategories] = useState<CategoryDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [viewMode, setViewMode] = useState<'standard' | 'matrix'>('standard');
-  const [editingSubtaskId, setEditingSubtaskId] = useState<number | null>(null);
-  const [editingTaskId, setEditingTaskId] = useState<number | null>(null);
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -80,21 +77,16 @@ export const Dashboard = () => {
     return Math.round(categories.reduce((sum, cat) => sum + (cat.totalPrice || 0), 0) * 100) / 100;
   };
 
-  const handleEditSubtask = (subtaskId: number, taskId: number) => {
-    setEditingSubtaskId(subtaskId);
-    setEditingTaskId(taskId);
-  };
-
-  const getEditingSubtask = () => {
-    if (!editingSubtaskId || !editingTaskId) return null;
-    for (const category of categories) {
-      for (const task of category.tasks || []) {
-        if (task.id === editingTaskId) {
-          return task.subtasks?.find((s) => s.id === editingSubtaskId);
-        }
-      }
+  const handleExport = async () => {
+    if (exporting || categories.length === 0) return;
+    setExporting(true);
+    try {
+      await exportToExcel(categories, t, language);
+    } catch (error) {
+      console.error('Failed to export:', error);
+    } finally {
+      setExporting(false);
     }
-    return null;
   };
 
   if (loading) {
@@ -118,13 +110,19 @@ export const Dashboard = () => {
               <div className="flex items-center gap-2 sm:gap-3">
                 <span className="text-sm sm:text-base text-white/90">{user?.username || ''}</span>
                 <div className="w-px h-5 sm:h-6 bg-white/30"></div>
-                <button
-                  onClick={() => setViewMode(viewMode === 'standard' ? 'matrix' : 'standard')}
-                  className="px-3 py-1.5 text-xs sm:text-sm text-white bg-white/10 hover:bg-white/20 rounded-md transition font-medium"
-                  title={viewMode === 'standard' ? t('eisenhowerMatrix.viewMatrix') : t('eisenhowerMatrix.viewStandard')}
-                >
-                  {viewMode === 'standard' ? t('eisenhowerMatrix.viewMatrix') : t('eisenhowerMatrix.viewStandard')}
-                </button>
+                {categories.length > 0 && (
+                  <button
+                    onClick={handleExport}
+                    disabled={exporting}
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm text-white bg-white/10 hover:bg-white/20 rounded-md transition font-medium disabled:opacity-60"
+                    title={t('export.button')}
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    {exporting ? t('export.exporting') : t('export.button')}
+                  </button>
+                )}
                 <button
                   onClick={logout}
                   className="p-2 text-white hover:bg-white/20 rounded-md transition"
@@ -145,13 +143,18 @@ export const Dashboard = () => {
               <div className="flex items-center gap-1">
                 <span className="text-xs text-white/90">{user?.username || ''}</span>
                 <div className="w-px h-4 bg-white/30"></div>
-                <button
-                  onClick={() => setViewMode(viewMode === 'standard' ? 'matrix' : 'standard')}
-                  className="px-2 py-1 text-xs text-white bg-white/10 hover:bg-white/20 rounded-md transition font-medium"
-                  title={viewMode === 'standard' ? t('eisenhowerMatrix.viewMatrix') : t('eisenhowerMatrix.viewStandard')}
-                >
-                  {viewMode === 'standard' ? 'Matrix' : 'Standard'}
-                </button>
+                {categories.length > 0 && (
+                  <button
+                    onClick={handleExport}
+                    disabled={exporting}
+                    className="p-2 text-white hover:bg-white/20 rounded-md transition disabled:opacity-60"
+                    title={t('export.button')}
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                  </button>
+                )}
                 <button
                   onClick={logout}
                   className="p-2 text-white hover:bg-white/20 rounded-md transition"
@@ -261,8 +264,6 @@ export const Dashboard = () => {
               {t('dashboard.createCategory')}
             </button>
           </div>
-        ) : viewMode === 'matrix' ? (
-          <EisenhowerMatrix categories={categories} onEditSubtask={handleEditSubtask} />
         ) : (
           <div className="space-y-3 sm:space-y-6">
             {categories.map((category) => (
@@ -291,23 +292,6 @@ export const Dashboard = () => {
         onClose={() => setShowCategoryModal(false)}
         onSuccess={loadCategories}
       />
-
-      {editingSubtaskId && editingTaskId && (
-        <SubtaskFormModal
-          isOpen={true}
-          onClose={() => {
-            setEditingSubtaskId(null);
-            setEditingTaskId(null);
-          }}
-          onSuccess={() => {
-            loadCategories();
-            setEditingSubtaskId(null);
-            setEditingTaskId(null);
-          }}
-          taskId={editingTaskId}
-          subtask={getEditingSubtask() || undefined}
-        />
-      )}
     </div>
   );
 };

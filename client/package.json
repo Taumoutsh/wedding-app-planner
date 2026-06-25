@@ -10,6 +10,7 @@
   "dependencies": {
     "@wedding-planner/shared": "1.0.0",
     "axios": "^1.6.5",
+    "exceljs": "^4.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

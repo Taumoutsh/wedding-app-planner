@@ -56,6 +56,21 @@ Create a web application for organizing a wedding.
 ## Progress Tracking
 The overall progress of the wedding will be represented by the weighted average of all entered subtasks.
 
+## Data Export
+- An "Export" button in the dashboard header generates an Excel (.xlsx) workbook
+  from the currently loaded data (client-side, no extra API call)
+- Implemented in `client/src/utils/exportToExcel.ts` using `exceljs`, which is
+  lazy-loaded via dynamic `import()` so it stays out of the initial bundle
+- **Detail sheet**: hierarchical listing (Category → Task → Subtask) with each
+  subtask's comment, deadline, creator, progress, weight, price, and link.
+  Prices are summed at three levels: a subtotal per task ("subcategory"), a
+  total per category, and a grand total at the bottom
+- **Summary sheet**: one row per category (task count, subtask count, average
+  progress, total price) plus a grand-total row, and two embedded bar charts
+  (budget by category, average progress by category) rendered to canvas images
+- Sheet labels and headers are localized via the i18n `export` namespace; the
+  button is hidden when there are no categories
+
 ## CRUD Operations
 - Categories, tasks, and subtasks can be created, added, or deleted
 - When deleting, all child elements are also deleted (add a confirmation popup)
@@ -138,3 +153,4 @@ Translations are organized by component/feature:
 - `subtaskFormModal` - Subtask creation/edit modal
 - `subtaskItem` - Subtask item display and dialogs
 - `confirmDialog` - Confirmation dialog translations
+- `export` - Excel export button, sheet names, column headers, and chart titles
