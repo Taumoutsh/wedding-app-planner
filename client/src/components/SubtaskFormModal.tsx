@@ -27,8 +27,6 @@ export const SubtaskFormModal = ({
   const [weight, setWeight] = useState<number | ''>(1);
   const [price, setPrice] = useState<number | null>(null);
   const [link, setLink] = useState('');
-  const [urgent, setUrgent] = useState(false);
-  const [important, setImportant] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -41,8 +39,6 @@ export const SubtaskFormModal = ({
       setWeight(subtask.weight);
       setPrice(subtask.price ?? null);
       setLink(subtask.link || '');
-      setUrgent(subtask.urgent);
-      setImportant(subtask.important);
     } else {
       setTitle('');
       setComment('');
@@ -51,8 +47,6 @@ export const SubtaskFormModal = ({
       setWeight(1);
       setPrice(null);
       setLink('');
-      setUrgent(false);
-      setImportant(false);
     }
     setError('');
   }, [subtask, isOpen]);
@@ -71,8 +65,8 @@ export const SubtaskFormModal = ({
         weight: weight === '' ? 1 : weight,
         price: price ?? null,
         link: link || null,
-        urgent,
-        important,
+        urgent: false,
+        important: false,
       };
 
       if (subtask) {
@@ -176,8 +170,8 @@ export const SubtaskFormModal = ({
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-4 mb-4">
-          <div>
+        <div className="grid grid-cols-3 gap-4 mb-4 items-end">
+          <div className="flex flex-col h-full">
             <label htmlFor="progress" className="block text-sm font-medium text-gray-700 mb-1">
               {t('subtaskFormModal.progress')}
             </label>
@@ -191,11 +185,11 @@ export const SubtaskFormModal = ({
                 const parsed = parseInt(e.target.value);
                 setProgressPercentage(Number.isNaN(parsed) ? '' : parsed);
               }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D97B8A]"
+              className="w-full mt-auto px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D97B8A]"
             />
           </div>
 
-          <div>
+          <div className="flex flex-col h-full">
             <label htmlFor="weight" className="block text-sm font-medium text-gray-700 mb-1">
               {t('subtaskFormModal.weight')}
             </label>
@@ -208,11 +202,11 @@ export const SubtaskFormModal = ({
                 const parsed = parseInt(e.target.value);
                 setWeight(Number.isNaN(parsed) ? '' : parsed);
               }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D97B8A]"
+              className="w-full mt-auto px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D97B8A]"
             />
           </div>
 
-          <div>
+          <div className="flex flex-col h-full">
             <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
               {t('subtaskFormModal.price')}
             </label>
@@ -230,31 +224,9 @@ export const SubtaskFormModal = ({
                 const parsed = parseFloat(e.target.value);
                 setPrice(Number.isNaN(parsed) ? null : parsed);
               }}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D97B8A]"
+              className="w-full mt-auto px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D97B8A]"
             />
           </div>
-        </div>
-
-        <div className="flex gap-6 mb-4">
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={urgent}
-              onChange={(e) => setUrgent(e.target.checked)}
-              className="w-4 h-4 text-[#D97B8A] border-gray-300 rounded focus:ring-2 focus:ring-[#D97B8A]"
-            />
-            <span className="text-sm font-medium text-gray-700">{t('subtaskFormModal.urgent')}</span>
-          </label>
-
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={important}
-              onChange={(e) => setImportant(e.target.checked)}
-              className="w-4 h-4 text-[#D97B8A] border-gray-300 rounded focus:ring-2 focus:ring-[#D97B8A]"
-            />
-            <span className="text-sm font-medium text-gray-700">{t('subtaskFormModal.important')}</span>
-          </label>
         </div>
 
         <div className="flex justify-end gap-2">

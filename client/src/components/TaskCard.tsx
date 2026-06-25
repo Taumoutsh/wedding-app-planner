@@ -144,7 +144,7 @@ export const TaskCard = ({ task, onUpdate, dragHandle }: TaskCardProps) => {
                 />
               </div>
               <span className="text-xs font-semibold text-gray-700 whitespace-nowrap">
-                {task.averageProgress.toFixed(1)}%
+                {task.averageProgress.toFixed(0)}%
               </span>
             </div>
             <div className="w-px h-5 bg-gray-300"></div>
