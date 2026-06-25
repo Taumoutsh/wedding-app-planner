@@ -1,5 +1,10 @@
 export const translations = {
   en: {
+    // Common / shared
+    common: {
+      dragToReorder: 'Drag to reorder',
+    },
+
     // LoginForm
     loginForm: {
       heading: 'Mariage Tomarea 💍',
@@ -141,6 +146,11 @@ export const translations = {
   },
 
   fr: {
+    // Common / shared
+    common: {
+      dragToReorder: 'Glisser pour réordonner',
+    },
+
     // LoginForm
     loginForm: {
       heading: 'Mariage Tomarea 💍',

@@ -4,13 +4,15 @@ import { subtaskApi } from '../services/api';
 import { useTranslation } from '../i18n/useTranslation';
 import { SubtaskFormModal } from './SubtaskFormModal';
 import { ConfirmDialog } from './ConfirmDialog';
+import { DragHandle, type DragHandleProps } from './SortableList';
 
 interface SubtaskItemProps {
   subtask: SubtaskDTO;
   onUpdate: () => void;
+  dragHandle?: DragHandleProps;
 }
 
-export const SubtaskItem = ({ subtask, onUpdate }: SubtaskItemProps) => {
+export const SubtaskItem = ({ subtask, onUpdate, dragHandle }: SubtaskItemProps) => {
   const { t } = useTranslation();
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -47,6 +49,7 @@ export const SubtaskItem = ({ subtask, onUpdate }: SubtaskItemProps) => {
     <>
       <div className={`bg-gradient-to-r from-[#F5E6E8] to-[#F9EDE8] rounded p-2 sm:p-3 text-xs hover:from-[#F0DDE0] hover:to-[#F5E5DF] transition ${isPastDue ? 'opacity-40' : ''}`}>
         <div className="bg-gradient-to-r from-[#D97B8A] to-[#E8B4A1] -mx-2 sm:-mx-3 -mt-2 sm:-mt-3 px-2 sm:px-3 py-1.5 sm:py-2 rounded-t flex items-start gap-2 mb-2">
+          <DragHandle handle={dragHandle} className="p-0.5 text-white/80 hover:text-white" />
           <div className="flex-1">
             <h4 className="font-semibold text-white">{subtask.title}</h4>
           </div>

@@ -1,8 +1,8 @@
 import { Response } from 'express';
 import { prisma } from '../utils/db';
 import { AuthRequest } from '../middleware/auth';
-import { CreateTaskRequest, UpdateTaskRequest, TaskDTO } from '@wedding-planner/shared';
-import { calculateWeightedAverage } from '../utils/calculations';
+import { CreateTaskRequest, UpdateTaskRequest, TaskDTO, ReorderRequest } from '@wedding-planner/shared';
+import { calculateWeightedAverage, calculateTotalPrice } from '../utils/calculations';
 
 export const createTask = async (req: AuthRequest, res: Response) => {
   try {
@@ -22,11 +22,16 @@ export const createTask = async (req: AuthRequest, res: Response) => {
       });
     }
 
+    const maxPosition = await prisma.task.aggregate({
+      where: { categoryId },
+      _max: { position: true },
+    });
     const task = await prisma.task.create({
       data: {
         categoryId,
         title,
         comment: comment || '',
+        position: (maxPosition._max.position ?? -1) + 1,
       },
       include: {
         subtasks: true,
@@ -36,6 +41,7 @@ export const createTask = async (req: AuthRequest, res: Response) => {
     const taskWithProgress: TaskDTO = {
       ...task,
       averageProgress: 0,
+      totalPrice: 0,
       subtasks: [],
     };
 
@@ -75,6 +81,7 @@ export const updateTask = async (req: AuthRequest, res: Response) => {
     const taskWithProgress: TaskDTO = {
       ...task,
       averageProgress: calculateWeightedAverage(task.subtasks),
+      totalPrice: calculateTotalPrice(task.subtasks),
       subtasks: task.subtasks,
     };
 
@@ -102,6 +109,33 @@ export const deleteTask = async (req: AuthRequest, res: Response) => {
     res.status(500).json({
       error: 'Internal Server Error',
       message: 'Failed to delete task',
+    });
+  }
+};
+
+export const reorderTasks = async (req: AuthRequest, res: Response) => {
+  try {
+    const { orderedIds } = req.body as ReorderRequest;
+
+    if (!Array.isArray(orderedIds)) {
+      return res.status(400).json({
+        error: 'Bad Request',
+        message: 'orderedIds must be an array',
+      });
+    }
+
+    await prisma.$transaction(
+      orderedIds.map((id, index) =>
+        prisma.task.update({ where: { id }, data: { position: index } })
+      )
+    );
+
+    res.status(204).send();
+  } catch (error) {
+    console.error('Reorder tasks error:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: 'Failed to reorder tasks',
     });
   }
 };

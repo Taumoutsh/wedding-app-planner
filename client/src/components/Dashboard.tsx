@@ -5,6 +5,7 @@ import { useTranslation } from '../i18n/useTranslation';
 import type { CategoryDTO } from '@wedding-planner/shared';
 import { CategoryCard } from './CategoryCard';
 import { CategoryFormModal } from './CategoryFormModal';
+import { SortableList } from './SortableList';
 import { exportToExcel } from '../utils/exportToExcel';
 
 export const Dashboard = () => {
@@ -75,6 +76,20 @@ export const Dashboard = () => {
 
   const totalBudget = () => {
     return Math.round(categories.reduce((sum, cat) => sum + (cat.totalPrice || 0), 0) * 100) / 100;
+  };
+
+  const handleReorderCategories = async (orderedIds: number[]) => {
+    const byId = new Map(categories.map((category) => [category.id, category]));
+    const reordered = orderedIds
+      .map((id) => byId.get(id))
+      .filter((category): category is CategoryDTO => category !== undefined);
+    setCategories(reordered);
+    try {
+      await categoryApi.reorder(orderedIds);
+    } catch (error) {
+      console.error('Failed to reorder categories:', error);
+      loadCategories();
+    }
   };
 
   const handleExport = async () => {
@@ -266,13 +281,20 @@ export const Dashboard = () => {
           </div>
         ) : (
           <div className="space-y-3 sm:space-y-6">
-            {categories.map((category) => (
-              <CategoryCard
-                key={category.id}
-                category={category}
-                onUpdate={loadCategories}
-              />
-            ))}
+            <SortableList
+              items={categories}
+              getId={(category) => category.id}
+              onReorder={handleReorderCategories}
+              strategy="vertical"
+              className="space-y-3 sm:space-y-6"
+              renderItem={(category, dragHandle) => (
+                <CategoryCard
+                  category={category}
+                  onUpdate={loadCategories}
+                  dragHandle={dragHandle}
+                />
+              )}
+            />
 
             {/* Add category button below the last category */}
             <div className="flex justify-center pt-2 sm:pt-4">

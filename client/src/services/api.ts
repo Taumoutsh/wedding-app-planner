@@ -51,6 +51,7 @@ export const categoryApi = {
   update: (id: number, data: UpdateCategoryRequest) =>
     api.put<CategoryDTO>(`/categories/${id}`, data),
   delete: (id: number) => api.delete(`/categories/${id}`),
+  reorder: (orderedIds: number[]) => api.put('/categories/reorder', { orderedIds }),
 };
 
 export const taskApi = {
@@ -58,6 +59,7 @@ export const taskApi = {
   update: (id: number, data: UpdateTaskRequest) =>
     api.put<TaskDTO>(`/tasks/${id}`, data),
   delete: (id: number) => api.delete(`/tasks/${id}`),
+  reorder: (orderedIds: number[]) => api.put('/tasks/reorder', { orderedIds }),
 };
 
 export const subtaskApi = {
@@ -65,6 +67,7 @@ export const subtaskApi = {
   update: (id: number, data: UpdateSubtaskRequest) =>
     api.put<SubtaskDTO>(`/subtasks/${id}`, data),
   delete: (id: number) => api.delete(`/subtasks/${id}`),
+  reorder: (orderedIds: number[]) => api.put('/subtasks/reorder', { orderedIds }),
 };
 
 export default api;

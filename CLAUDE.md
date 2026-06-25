@@ -48,10 +48,19 @@ Create a web application for organizing a wedding.
   - A weight (allowing a weighted average calculation)
 
 #### Subtask Display Rules
-- Subtasks are sorted by date: closest deadline first
-- Past-due subtasks (date already passed) are displayed at the bottom
-- Past-due subtasks are shown with reduced opacity to indicate they are overdue
+- Subtasks are displayed in a user-defined manual order (see Ordering & Drag-and-Drop)
+- Past-due subtasks (date already passed) are shown with reduced opacity to indicate they are overdue
 - Color-coded progress bars indicate completion status (red → orange → yellow → lime → green)
+
+## Ordering & Drag-and-Drop
+- Categories, tasks, and subtasks each have an integer `position` column and are
+  always returned/sorted by `position` ascending (newly created items go to the end)
+- Users reorder any level by drag-and-drop, using a grip handle on each card
+  (built with `@dnd-kit`; see `client/src/components/SortableList.tsx`)
+- On drop the client reorders optimistically and persists the new order via a
+  reorder endpoint: `PUT /api/categories/reorder`, `PUT /api/tasks/reorder`,
+  `PUT /api/subtasks/reorder`, each taking `{ orderedIds: number[] }`
+- Subtasks are NOT auto-sorted by deadline (manual order takes precedence)
 
 ## Progress Tracking
 The overall progress of the wedding will be represented by the weighted average of all entered subtasks.

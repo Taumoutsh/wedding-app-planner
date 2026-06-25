@@ -19,6 +19,7 @@ model User {
 model Category {
   id        Int      @id @default(autoincrement())
   name      String
+  position  Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   tasks     Task[]
@@ -31,6 +32,7 @@ model Task {
   categoryId Int
   title      String
   comment    String    @default("")
+  position   Int       @default(0)
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
   category   Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
@@ -52,6 +54,7 @@ model Subtask {
   link               String?
   urgent             Boolean   @default(false)
   important          Boolean   @default(false)
+  position           Int       @default(0)
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
   task               Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)

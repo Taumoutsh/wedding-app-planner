@@ -1,23 +1,45 @@
 import { useState, useEffect } from 'react';
-import type { CategoryDTO } from '@wedding-planner/shared';
-import { categoryApi } from '../services/api';
+import type { CategoryDTO, TaskDTO } from '@wedding-planner/shared';
+import { categoryApi, taskApi } from '../services/api';
 import { TaskCard } from './TaskCard';
 import { CategoryFormModal } from './CategoryFormModal';
 import { TaskFormModal } from './TaskFormModal';
 import { ConfirmDialog } from './ConfirmDialog';
+import { SortableList, DragHandle, type DragHandleProps } from './SortableList';
 import { useTranslation } from '../i18n/useTranslation';
 
 interface CategoryCardProps {
   category: CategoryDTO;
   onUpdate: () => void;
+  dragHandle?: DragHandleProps;
 }
 
-export const CategoryCard = ({ category, onUpdate }: CategoryCardProps) => {
+export const CategoryCard = ({ category, onUpdate, dragHandle }: CategoryCardProps) => {
   const { t } = useTranslation();
   const [showEditModal, setShowEditModal] = useState(false);
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false); // Default to collapsed
+  const [tasks, setTasks] = useState<TaskDTO[]>(category.tasks ?? []);
+
+  // Keep local task order in sync when the category data is refreshed.
+  useEffect(() => {
+    setTasks(category.tasks ?? []);
+  }, [category.tasks]);
+
+  const handleReorderTasks = async (orderedIds: number[]) => {
+    const byId = new Map(tasks.map((task) => [task.id, task]));
+    const reordered = orderedIds
+      .map((id) => byId.get(id))
+      .filter((task): task is TaskDTO => task !== undefined);
+    setTasks(reordered);
+    try {
+      await taskApi.reorder(orderedIds);
+    } catch (error) {
+      console.error('Failed to reorder tasks:', error);
+      onUpdate();
+    }
+  };
 
   // Load expand/collapse state from cookies
   useEffect(() => {
@@ -57,6 +79,7 @@ export const CategoryCard = ({ category, onUpdate }: CategoryCardProps) => {
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         <div className="bg-gradient-to-r from-[#D97B8A] to-[#E8B4A1] p-2 sm:p-4">
           <div className="flex justify-between items-start">
+            <DragHandle handle={dragHandle} className="p-1 mt-0.5 text-white/80 hover:text-white" />
             <button
               onClick={toggleExpanded}
               className="flex-1 flex items-start gap-1 sm:gap-3 hover:opacity-80 transition text-left"
@@ -136,11 +159,16 @@ export const CategoryCard = ({ category, onUpdate }: CategoryCardProps) => {
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 sm:gap-4 mb-4">
-                  {category.tasks.map((task) => (
-                    <TaskCard key={task.id} task={task} onUpdate={onUpdate} />
-                  ))}
-                </div>
+                <SortableList
+                  items={tasks}
+                  getId={(task) => task.id}
+                  onReorder={handleReorderTasks}
+                  strategy="grid"
+                  className="grid grid-cols-1 lg:grid-cols-2 gap-2 sm:gap-4 mb-4"
+                  renderItem={(task, taskDragHandle) => (
+                    <TaskCard task={task} onUpdate={onUpdate} dragHandle={taskDragHandle} />
+                  )}
+                />
                 <button
                   onClick={() => setShowTaskModal(true)}
                   className="w-full px-3 sm:px-4 py-2 border-2 border-dashed border-gray-300 text-gray-600 rounded-md hover:border-[#D97B8A] hover:text-[#D97B8A] transition"

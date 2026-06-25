@@ -1,23 +1,45 @@
 import { useState, useEffect } from 'react';
-import type { TaskDTO } from '@wedding-planner/shared';
-import { taskApi } from '../services/api';
+import type { TaskDTO, SubtaskDTO } from '@wedding-planner/shared';
+import { taskApi, subtaskApi } from '../services/api';
 import { SubtaskItem } from './SubtaskItem';
 import { TaskFormModal } from './TaskFormModal';
 import { SubtaskFormModal } from './SubtaskFormModal';
 import { ConfirmDialog } from './ConfirmDialog';
+import { SortableList, DragHandle, type DragHandleProps } from './SortableList';
 import { useTranslation } from '../i18n/useTranslation';
 
 interface TaskCardProps {
   task: TaskDTO;
   onUpdate: () => void;
+  dragHandle?: DragHandleProps;
 }
 
-export const TaskCard = ({ task, onUpdate }: TaskCardProps) => {
+export const TaskCard = ({ task, onUpdate, dragHandle }: TaskCardProps) => {
   const { t } = useTranslation();
   const [showEditModal, setShowEditModal] = useState(false);
   const [showSubtaskModal, setShowSubtaskModal] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false); // Default to collapsed
+  const [subtasks, setSubtasks] = useState<SubtaskDTO[]>(task.subtasks ?? []);
+
+  // Keep local subtask order in sync when the task data is refreshed.
+  useEffect(() => {
+    setSubtasks(task.subtasks ?? []);
+  }, [task.subtasks]);
+
+  const handleReorderSubtasks = async (orderedIds: number[]) => {
+    const byId = new Map(subtasks.map((subtask) => [subtask.id, subtask]));
+    const reordered = orderedIds
+      .map((id) => byId.get(id))
+      .filter((subtask): subtask is SubtaskDTO => subtask !== undefined);
+    setSubtasks(reordered);
+    try {
+      await subtaskApi.reorder(orderedIds);
+    } catch (error) {
+      console.error('Failed to reorder subtasks:', error);
+      onUpdate();
+    }
+  };
 
   // Load expand/collapse state from cookies
   useEffect(() => {
@@ -61,55 +83,17 @@ export const TaskCard = ({ task, onUpdate }: TaskCardProps) => {
     return 'bg-green-500';
   };
 
-  const sortedSubtasks = task.subtasks ? [...task.subtasks].sort((a, b) => {
-    const now = new Date();
-    const hasDateA = a.date !== null;
-    const hasDateB = b.date !== null;
-
-    // Determine category for each subtask: 0=future, 1=no-date, 2=past
-    const getCategoryOrder = (hasDate: boolean, date: Date | null): number => {
-      if (!hasDate || !date) return 1; // no date = middle
-      const isPast = new Date(date) < now;
-      return isPast ? 2 : 0; // past = 2, future = 0
-    };
-
-    const categoryA = getCategoryOrder(hasDateA, a.date);
-    const categoryB = getCategoryOrder(hasDateB, b.date);
-
-    // Different categories: sort by category order (0, 1, 2)
-    if (categoryA !== categoryB) {
-      return categoryA - categoryB;
-    }
-
-    // Same category: sort by date within that category
-    if (!hasDateA && !hasDateB) return 0; // both no date, keep order
-
-    const dateA = a.date ? new Date(a.date) : now;
-    const dateB = b.date ? new Date(b.date) : now;
-
-    // Future dates: closest first (ascending)
-    if (categoryA === 0) {
-      return dateA.getTime() - dateB.getTime();
-    }
-
-    // Past dates: most recent first (descending)
-    if (categoryA === 2) {
-      return dateB.getTime() - dateA.getTime();
-    }
-
-    return 0;
-  }) : [];
-
   return (
     <>
       <div className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition">
         <div className="p-2 sm:p-4 hover:bg-gray-50 transition">
-          <button
-            onClick={toggleExpanded}
-            className="w-full flex justify-between items-start gap-2 mb-2"
-            title={isExpanded ? t('taskCard.collapse') : t('taskCard.expand')}
-          >
-            <div className="flex-1 flex items-start gap-2 text-left">
+          <div className="flex justify-between items-start gap-2 mb-2">
+            <DragHandle handle={dragHandle} className="p-0.5 mt-0.5 text-gray-400 hover:text-gray-600" />
+            <button
+              onClick={toggleExpanded}
+              className="flex-1 flex items-start gap-2 text-left"
+              title={isExpanded ? t('taskCard.collapse') : t('taskCard.expand')}
+            >
               <div className="p-0.5 text-gray-600 flex-shrink-0 mt-0.5">
                 <svg
                   className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? '' : '-rotate-90'}`}
@@ -126,15 +110,12 @@ export const TaskCard = ({ task, onUpdate }: TaskCardProps) => {
                   <p className="text-sm text-gray-600 mt-1">{task.comment}</p>
                 )}
               </div>
-            </div>
+            </button>
 
-            <div className="flex gap-1 ml-2 flex-shrink-0 pointer-events-none">
+            <div className="flex gap-1 ml-2 flex-shrink-0">
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowEditModal(true);
-                }}
-                className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition pointer-events-auto"
+                onClick={() => setShowEditModal(true)}
+                className="p-1.5 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition"
                 title={t('taskCard.editTask')}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -142,11 +123,8 @@ export const TaskCard = ({ task, onUpdate }: TaskCardProps) => {
                 </svg>
               </button>
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowDeleteDialog(true);
-                }}
-                className="p-1.5 text-gray-500 hover:text-red-600 hover:bg-gray-100 rounded transition pointer-events-auto"
+                onClick={() => setShowDeleteDialog(true)}
+                className="p-1.5 text-gray-500 hover:text-red-600 hover:bg-gray-100 rounded transition"
                 title={t('taskCard.deleteTask')}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -154,7 +132,7 @@ export const TaskCard = ({ task, onUpdate }: TaskCardProps) => {
                 </svg>
               </button>
             </div>
-          </button>
+          </div>
 
           {/* Progress bar and budget - always visible in header */}
           <div className="flex items-center gap-2 flex-wrap mt-2">
@@ -181,15 +159,20 @@ export const TaskCard = ({ task, onUpdate }: TaskCardProps) => {
 
         {isExpanded && (
           <div className="border-t border-gray-200 p-2 sm:p-4">
-            <div className="space-y-2">
-              {sortedSubtasks.length > 0 ? (
-                sortedSubtasks.map((subtask) => (
-                  <SubtaskItem key={subtask.id} subtask={subtask} onUpdate={onUpdate} />
-                ))
-              ) : (
-                <p className="text-xs text-gray-500 text-center py-2">{t('taskCard.noSubtasks')}</p>
-              )}
-            </div>
+            {subtasks.length > 0 ? (
+              <SortableList
+                items={subtasks}
+                getId={(subtask) => subtask.id}
+                onReorder={handleReorderSubtasks}
+                strategy="vertical"
+                className="space-y-2"
+                renderItem={(subtask, subtaskDragHandle) => (
+                  <SubtaskItem subtask={subtask} onUpdate={onUpdate} dragHandle={subtaskDragHandle} />
+                )}
+              />
+            ) : (
+              <p className="text-xs text-gray-500 text-center py-2">{t('taskCard.noSubtasks')}</p>
+            )}
 
             <button
               onClick={() => setShowSubtaskModal(true)}
