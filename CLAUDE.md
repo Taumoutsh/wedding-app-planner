@@ -7,6 +7,12 @@ Create a web application for organizing a wedding.
 - This application will be accessible through a login and password
 - The password must be encrypted in the database
 - No account creation possible
+- Auth uses a JWT (30-day expiry) stored in localStorage
+- Session expiry handling: when any API request returns 401/403 (expired or
+  invalid token), the axios response interceptor in `client/src/services/api.ts`
+  clears the stored session and dispatches an `auth:unauthorized` event.
+  `AuthContext` listens for this event and resets auth state, returning the user
+  to the login screen instead of showing an empty dashboard.
 
 ## Technical Requirements
 - Use standard HTTP requests for data transmission

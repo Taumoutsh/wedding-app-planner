@@ -25,6 +25,22 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// When the token is missing/expired/invalid the server replies 401/403.
+// Clear the stale session and notify the app so it returns to the login
+// screen instead of rendering an empty dashboard.
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const status = error.response?.status;
+    if (status === 401 || status === 403) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.dispatchEvent(new Event('auth:unauthorized'));
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const authApi = {
   login: (data: LoginRequest) => api.post<LoginResponse>('/auth/login', data),
 };
