@@ -122,10 +122,10 @@ export const CategoryCard = ({ category, onUpdate, dragHandle }: CategoryCardPro
               </div>
             </button>
 
-            <div className="flex gap-2 flex-shrink-0">
+            <div className="flex gap-0.5 sm:gap-2 flex-shrink-0 -mr-1 sm:mr-0">
               <button
                 onClick={() => setShowEditModal(true)}
-                className="p-2 text-white hover:bg-white/20 rounded transition"
+                className="p-1.5 sm:p-2 text-white hover:bg-white/20 rounded transition"
                 title={t('categoryCard.editCategory')}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -134,7 +134,7 @@ export const CategoryCard = ({ category, onUpdate, dragHandle }: CategoryCardPro
               </button>
               <button
                 onClick={() => setShowDeleteDialog(true)}
-                className="p-2 text-white hover:bg-white/20 rounded transition"
+                className="p-1.5 sm:p-2 text-white hover:bg-white/20 rounded transition"
                 title={t('categoryCard.deleteCategory')}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
