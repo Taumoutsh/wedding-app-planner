@@ -196,7 +196,7 @@ export const Dashboard = () => {
                     />
                   </div>
                   <span className="font-bold text-white text-xs min-w-fit">
-                    {overallProgress().toFixed(1)}%
+                    {overallProgress().toFixed(0)}%
                   </span>
                 </div>
 
@@ -242,7 +242,7 @@ export const Dashboard = () => {
                         />
                       </div>
                       <span className="font-bold text-white min-w-fit text-xs sm:text-sm min-w-[3.5rem]">
-                        {overallProgress().toFixed(1)}%
+                        {overallProgress().toFixed(0)}%
                       </span>
                     </div>
                   </div>

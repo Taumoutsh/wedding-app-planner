@@ -108,7 +108,7 @@ export const CategoryCard = ({ category, onUpdate, dragHandle }: CategoryCardPro
                       />
                     </div>
                     <span className="text-xs sm:text-sm font-semibold text-white whitespace-nowrap">
-                      {category.averageProgress.toFixed(1)}%
+                      {category.averageProgress.toFixed(0)}%
                     </span>
                   </div>
                   <div className="w-px h-5 bg-white/30"></div>
