@@ -7,6 +7,12 @@ Create a web application for organizing a wedding.
 - This application will be accessible through a login and password
 - The password must be encrypted in the database
 - No account creation possible
+- Auth uses a JWT (30-day expiry) stored in localStorage
+- Session expiry handling: when any API request returns 401/403 (expired or
+  invalid token), the axios response interceptor in `client/src/services/api.ts`
+  clears the stored session and dispatches an `auth:unauthorized` event.
+  `AuthContext` listens for this event and resets auth state, returning the user
+  to the login screen instead of showing an empty dashboard.
 
 ## Technical Requirements
 - Use standard HTTP requests for data transmission
@@ -42,13 +48,37 @@ Create a web application for organizing a wedding.
   - A weight (allowing a weighted average calculation)
 
 #### Subtask Display Rules
-- Subtasks are sorted by date: closest deadline first
-- Past-due subtasks (date already passed) are displayed at the bottom
-- Past-due subtasks are shown with reduced opacity to indicate they are overdue
+- Subtasks are displayed in a user-defined manual order (see Ordering & Drag-and-Drop)
+- Past-due subtasks (date already passed) are shown with reduced opacity to indicate they are overdue
 - Color-coded progress bars indicate completion status (red → orange → yellow → lime → green)
+
+## Ordering & Drag-and-Drop
+- Categories, tasks, and subtasks each have an integer `position` column and are
+  always returned/sorted by `position` ascending (newly created items go to the end)
+- Users reorder any level by drag-and-drop, using a grip handle on each card
+  (built with `@dnd-kit`; see `client/src/components/SortableList.tsx`)
+- On drop the client reorders optimistically and persists the new order via a
+  reorder endpoint: `PUT /api/categories/reorder`, `PUT /api/tasks/reorder`,
+  `PUT /api/subtasks/reorder`, each taking `{ orderedIds: number[] }`
+- Subtasks are NOT auto-sorted by deadline (manual order takes precedence)
 
 ## Progress Tracking
 The overall progress of the wedding will be represented by the weighted average of all entered subtasks.
+
+## Data Export
+- An "Export" button in the dashboard header generates an Excel (.xlsx) workbook
+  from the currently loaded data (client-side, no extra API call)
+- Implemented in `client/src/utils/exportToExcel.ts` using `exceljs`, which is
+  lazy-loaded via dynamic `import()` so it stays out of the initial bundle
+- **Detail sheet**: hierarchical listing (Category → Task → Subtask) with each
+  subtask's comment, deadline, creator, progress, weight, price, and link.
+  Prices are summed at three levels: a subtotal per task ("subcategory"), a
+  total per category, and a grand total at the bottom
+- **Summary sheet**: one row per category (task count, subtask count, average
+  progress, total price) plus a grand-total row, and two embedded bar charts
+  (budget by category, average progress by category) rendered to canvas images
+- Sheet labels and headers are localized via the i18n `export` namespace; the
+  button is hidden when there are no categories
 
 ## CRUD Operations
 - Categories, tasks, and subtasks can be created, added, or deleted
@@ -132,6 +162,8 @@ Translations are organized by component/feature:
 - `subtaskFormModal` - Subtask creation/edit modal
 - `subtaskItem` - Subtask item display and dialogs
 - `confirmDialog` - Confirmation dialog translations
+- `export` - Excel export button, sheet names, column headers, and chart titles
+- `common` - Shared labels (e.g. drag-to-reorder handle)
 
 ## Git Workflow
 - **Do NOT automatically commit changes** - Wait for explicit commit requests

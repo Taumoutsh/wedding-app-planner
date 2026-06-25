@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import { prisma } from '../utils/db';
 import { AuthRequest } from '../middleware/auth';
-import { CreateSubtaskRequest, UpdateSubtaskRequest, SubtaskDTO } from '@wedding-planner/shared';
+import { CreateSubtaskRequest, UpdateSubtaskRequest, SubtaskDTO, ReorderRequest } from '@wedding-planner/shared';
 
 export const createSubtask = async (req: AuthRequest, res: Response) => {
   try {
@@ -22,6 +22,10 @@ export const createSubtask = async (req: AuthRequest, res: Response) => {
       });
     }
 
+    const maxPosition = await prisma.subtask.aggregate({
+      where: { taskId },
+      _max: { position: true },
+    });
     const subtask = await prisma.subtask.create({
       data: {
         taskId,
@@ -35,6 +39,7 @@ export const createSubtask = async (req: AuthRequest, res: Response) => {
         link: link || null,
         urgent: urgent || false,
         important: important || false,
+        position: (maxPosition._max.position ?? -1) + 1,
       },
     });
 
@@ -100,6 +105,33 @@ export const deleteSubtask = async (req: AuthRequest, res: Response) => {
     res.status(500).json({
       error: 'Internal Server Error',
       message: 'Failed to delete subtask',
+    });
+  }
+};
+
+export const reorderSubtasks = async (req: AuthRequest, res: Response) => {
+  try {
+    const { orderedIds } = req.body as ReorderRequest;
+
+    if (!Array.isArray(orderedIds)) {
+      return res.status(400).json({
+        error: 'Bad Request',
+        message: 'orderedIds must be an array',
+      });
+    }
+
+    await prisma.$transaction(
+      orderedIds.map((id, index) =>
+        prisma.subtask.update({ where: { id }, data: { position: index } })
+      )
+    );
+
+    res.status(204).send();
+  } catch (error) {
+    console.error('Reorder subtasks error:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: 'Failed to reorder subtasks',
     });
   }
 };

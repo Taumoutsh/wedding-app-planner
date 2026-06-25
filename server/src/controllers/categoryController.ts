@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import { prisma } from '../utils/db';
 import { AuthRequest } from '../middleware/auth';
-import { CreateCategoryRequest, UpdateCategoryRequest, CategoryDTO } from '@wedding-planner/shared';
+import { CreateCategoryRequest, UpdateCategoryRequest, CategoryDTO, ReorderRequest } from '@wedding-planner/shared';
 import { calculateWeightedAverage, calculateTotalPrice } from '../utils/calculations';
 
 export const getAllCategories = async (req: AuthRequest, res: Response) => {
@@ -9,13 +9,16 @@ export const getAllCategories = async (req: AuthRequest, res: Response) => {
     const categories = await prisma.category.findMany({
       include: {
         tasks: {
+          orderBy: { position: 'asc' },
           include: {
-            subtasks: true,
+            subtasks: {
+              orderBy: { position: 'asc' },
+            },
           },
         },
       },
       orderBy: {
-        createdAt: 'asc',
+        position: 'asc',
       },
     });
 
@@ -60,12 +63,16 @@ export const createCategory = async (req: AuthRequest, res: Response) => {
       });
     }
 
+    const maxPosition = await prisma.category.aggregate({ _max: { position: true } });
     const category = await prisma.category.create({
-      data: { name },
+      data: { name, position: (maxPosition._max.position ?? -1) + 1 },
       include: {
         tasks: {
+          orderBy: { position: 'asc' },
           include: {
-            subtasks: true,
+            subtasks: {
+              orderBy: { position: 'asc' },
+            },
           },
         },
       },
@@ -105,8 +112,11 @@ export const updateCategory = async (req: AuthRequest, res: Response) => {
       data: { name },
       include: {
         tasks: {
+          orderBy: { position: 'asc' },
           include: {
-            subtasks: true,
+            subtasks: {
+              orderBy: { position: 'asc' },
+            },
           },
         },
       },
@@ -154,6 +164,33 @@ export const deleteCategory = async (req: AuthRequest, res: Response) => {
     res.status(500).json({
       error: 'Internal Server Error',
       message: 'Failed to delete category',
+    });
+  }
+};
+
+export const reorderCategories = async (req: AuthRequest, res: Response) => {
+  try {
+    const { orderedIds } = req.body as ReorderRequest;
+
+    if (!Array.isArray(orderedIds)) {
+      return res.status(400).json({
+        error: 'Bad Request',
+        message: 'orderedIds must be an array',
+      });
+    }
+
+    await prisma.$transaction(
+      orderedIds.map((id, index) =>
+        prisma.category.update({ where: { id }, data: { position: index } })
+      )
+    );
+
+    res.status(204).send();
+  } catch (error) {
+    console.error('Reorder categories error:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: 'Failed to reorder categories',
     });
   }
 };

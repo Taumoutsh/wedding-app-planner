@@ -8,6 +8,7 @@ export interface User {
 export interface Category {
   id: number;
   name: string;
+  position: number;
   createdAt: Date;
   updatedAt: Date;
   averageProgress?: number;
@@ -19,6 +20,7 @@ export interface Task {
   categoryId: number;
   title: string;
   comment: string;
+  position: number;
   createdAt: Date;
   updatedAt: Date;
   averageProgress?: number;
@@ -38,6 +40,7 @@ export interface Subtask {
   link?: string | null;
   urgent: boolean;
   important: boolean;
+  position: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -115,6 +118,10 @@ export interface UpdateSubtaskRequest {
   link?: string | null;
   urgent: boolean;
   important: boolean;
+}
+
+export interface ReorderRequest {
+  orderedIds: number[];
 }
 
 export interface ErrorResponse {

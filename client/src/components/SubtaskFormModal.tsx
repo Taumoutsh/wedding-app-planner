@@ -23,8 +23,8 @@ export const SubtaskFormModal = ({
   const [title, setTitle] = useState('');
   const [comment, setComment] = useState('');
   const [date, setDate] = useState('');
-  const [progressPercentage, setProgressPercentage] = useState(0);
-  const [weight, setWeight] = useState(1);
+  const [progressPercentage, setProgressPercentage] = useState<number | ''>(0);
+  const [weight, setWeight] = useState<number | ''>(1);
   const [price, setPrice] = useState<number | null>(null);
   const [link, setLink] = useState('');
   const [urgent, setUrgent] = useState(false);
@@ -39,7 +39,7 @@ export const SubtaskFormModal = ({
       setDate(subtask.date ? new Date(subtask.date).toISOString().split('T')[0] : '');
       setProgressPercentage(subtask.progressPercentage);
       setWeight(subtask.weight);
-      setPrice(subtask.price || null);
+      setPrice(subtask.price ?? null);
       setLink(subtask.link || '');
       setUrgent(subtask.urgent);
       setImportant(subtask.important);
@@ -67,9 +67,9 @@ export const SubtaskFormModal = ({
         title,
         comment,
         date: date ? new Date(date) : null,
-        progressPercentage,
-        weight,
-        price: price || null,
+        progressPercentage: progressPercentage === '' ? 0 : progressPercentage,
+        weight: weight === '' ? 1 : weight,
+        price: price ?? null,
         link: link || null,
         urgent,
         important,
@@ -187,9 +187,11 @@ export const SubtaskFormModal = ({
               min="0"
               max="100"
               value={progressPercentage}
-              onChange={(e) => setProgressPercentage(parseInt(e.target.value) || 0)}
+              onChange={(e) => {
+                const parsed = parseInt(e.target.value);
+                setProgressPercentage(Number.isNaN(parsed) ? '' : parsed);
+              }}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D97B8A]"
-              required
             />
           </div>
 
@@ -202,9 +204,11 @@ export const SubtaskFormModal = ({
               type="number"
               min="1"
               value={weight}
-              onChange={(e) => setWeight(parseInt(e.target.value) || 1)}
+              onChange={(e) => {
+                const parsed = parseInt(e.target.value);
+                setWeight(Number.isNaN(parsed) ? '' : parsed);
+              }}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D97B8A]"
-              required
             />
           </div>
 
@@ -217,8 +221,15 @@ export const SubtaskFormModal = ({
               type="number"
               min="0"
               step="0.01"
-              value={price || ''}
-              onChange={(e) => setPrice(e.target.value ? parseFloat(e.target.value) : null)}
+              value={price ?? ''}
+              onChange={(e) => {
+                if (e.target.value === '') {
+                  setPrice(null);
+                  return;
+                }
+                const parsed = parseFloat(e.target.value);
+                setPrice(Number.isNaN(parsed) ? null : parsed);
+              }}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#D97B8A]"
             />
           </div>

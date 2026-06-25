@@ -25,6 +25,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
+  // The API layer fires this event when a request fails with 401/403
+  // (expired or invalid token). Drop the session so the user is sent back
+  // to the login screen rather than left on an empty dashboard.
+  useEffect(() => {
+    const handleUnauthorized = () => {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      setToken(null);
+      setUser(null);
+    };
+
+    window.addEventListener('auth:unauthorized', handleUnauthorized);
+    return () => window.removeEventListener('auth:unauthorized', handleUnauthorized);
+  }, []);
+
   const login = (newToken: string, newUser: UserDTO) => {
     localStorage.setItem('token', newToken);
     localStorage.setItem('user', JSON.stringify(newUser));

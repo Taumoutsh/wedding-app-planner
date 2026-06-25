@@ -4,6 +4,7 @@ import {
   createSubtask,
   updateSubtask,
   deleteSubtask,
+  reorderSubtasks,
 } from '../controllers/subtaskController';
 
 const router = Router();
@@ -11,6 +12,7 @@ const router = Router();
 router.use(authenticateToken);
 
 router.post('/', createSubtask);
+router.put('/reorder', reorderSubtasks);
 router.put('/:id', updateSubtask);
 router.delete('/:id', deleteSubtask);
 
