@@ -71,12 +71,25 @@ The overall progress of the wedding will be represented by the weighted average 
 - Implemented in `client/src/utils/exportToExcel.ts` using `exceljs`, which is
   lazy-loaded via dynamic `import()` so it stays out of the initial bundle
 - **Detail sheet**: hierarchical listing (Category → Task → Subtask) with each
-  subtask's comment, deadline, creator, progress, weight, price, and link.
-  Prices are summed at three levels: a subtotal per task ("subcategory"), a
-  total per category, and a grand total at the bottom
+  subtask's comment, deadline, creator, progress, weight, price, include toggle,
+  and link. Prices are summed at three levels: a subtotal per task
+  ("subcategory"), a total per category, and a grand total at the bottom
+- **Fold/unfold**: rows use Excel outline grouping (`outlineLevel` 0/1/2 with
+  `outlineProperties.summaryBelow = false`) so categories and tasks collapse via
+  the gutter +/- buttons. Secondary columns (comment, deadline, assignee, weight,
+  link) are grouped at column `outlineLevel` 1 so they hide/show with one click;
+  the header row also has an auto-filter
+- **Include toggles**: each subtask has an "Include" cell (✓/✗ dropdown, default
+  ✓) backed by data validation. All price totals — task subtotals, category
+  totals, grand total, and the Summary sheet prices — are live `SUMIF` formulas
+  keyed on the ✓ flag, so excluding a spending recalculates every total in Excel.
+  (Progress figures stay static; only spendings react to the toggle. The embedded
+  charts are images and do not react.) Real form-control checkbox widgets aren't
+  emitted because ExcelJS cannot create them
 - **Summary sheet**: one row per category (task count, subtask count, average
   progress, total price) plus a grand-total row, and two embedded bar charts
-  (budget by category, average progress by category) rendered to canvas images
+  (budget by category, average progress by category) rendered to canvas images.
+  Category/grand prices are cross-sheet formulas referencing the Detail totals
 - Sheet labels and headers are localized via the i18n `export` namespace; the
   button is hidden when there are no categories
 
