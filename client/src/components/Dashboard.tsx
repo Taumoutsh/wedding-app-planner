@@ -6,6 +6,8 @@ import type { CategoryDTO } from '@wedding-planner/shared';
 import { CategoryCard } from './CategoryCard';
 import { CategoryFormModal } from './CategoryFormModal';
 import { SortableList } from './SortableList';
+import { SubtaskSearch } from './SubtaskSearch';
+import { NavigationProvider } from '../contexts/NavigationContext';
 import { exportToExcel } from '../utils/exportToExcel';
 
 export const Dashboard = () => {
@@ -113,6 +115,7 @@ export const Dashboard = () => {
   }
 
   return (
+    <NavigationProvider>
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <header className="bg-gradient-to-br from-[#D97B8A] to-[#E8B4A1] shadow-lg sticky top-0 z-10 transition-all duration-300">
         <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-300 ${isScrolled ? 'py-2 sm:py-3' : 'py-6'}`}>
@@ -265,6 +268,8 @@ export const Dashboard = () => {
               </>
             )}
           </div>
+
+          {categories.length > 0 && <SubtaskSearch categories={categories} />}
         </div>
       </header>
 
@@ -315,5 +320,6 @@ export const Dashboard = () => {
         onSuccess={loadCategories}
       />
     </div>
+    </NavigationProvider>
   );
 };

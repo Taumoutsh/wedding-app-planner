@@ -7,6 +7,7 @@ import { TaskFormModal } from './TaskFormModal';
 import { ConfirmDialog } from './ConfirmDialog';
 import { SortableList, DragHandle, type DragHandleProps } from './SortableList';
 import { useTranslation } from '../i18n/useTranslation';
+import { useNavigation } from '../contexts/NavigationContext';
 
 interface CategoryCardProps {
   category: CategoryDTO;
@@ -16,11 +17,20 @@ interface CategoryCardProps {
 
 export const CategoryCard = ({ category, onUpdate, dragHandle }: CategoryCardProps) => {
   const { t } = useTranslation();
+  const { target } = useNavigation();
   const [showEditModal, setShowEditModal] = useState(false);
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false); // Default to collapsed
   const [tasks, setTasks] = useState<TaskDTO[]>(category.tasks ?? []);
+
+  // Expand automatically when a search result points to a subtask in this category.
+  useEffect(() => {
+    if (target && target.categoryId === category.id) {
+      setIsExpanded(true);
+      document.cookie = `category-${category.id}-expanded=true; path=/; max-age=31536000`;
+    }
+  }, [target, category.id]);
 
   // Keep local task order in sync when the category data is refreshed.
   useEffect(() => {

@@ -93,6 +93,23 @@ The overall progress of the wedding will be represented by the weighted average 
 - Sheet labels and headers are localized via the i18n `export` namespace; the
   button is hidden when there are no categories
 
+## Subtask Search
+- A sticky search bar sits in the dashboard header, above the category list
+  (`client/src/components/SubtaskSearch.tsx`)
+- It filters the already-loaded subtasks by **title** as the user types
+  (case- and accent-insensitive; no extra API call) and shows matches in a
+  combobox dropdown, each row showing the subtask title and its
+  `Category › Task` breadcrumb. Arrow keys + Enter navigate; Escape/outside
+  click closes
+- Selecting a result calls `navigateToSubtask` on a small `NavigationContext`
+  (`client/src/contexts/NavigationContext.tsx`), which holds a target
+  `{ categoryId, taskId, subtaskId, nonce }`. The `nonce` makes re-selecting the
+  same subtask re-trigger the effects
+- On navigation the matching `CategoryCard` and `TaskCard` force-expand (and
+  persist their expanded cookie) and the matching `SubtaskItem` scrolls into
+  view with a brief highlight ring
+- Strings localized via the i18n `search` namespace
+
 ## CRUD Operations
 - Categories, tasks, and subtasks can be created, added, or deleted
 - When deleting, all child elements are also deleted (add a confirmation popup)
@@ -175,6 +192,7 @@ Translations are organized by component/feature:
 - `subtaskFormModal` - Subtask creation/edit modal
 - `subtaskItem` - Subtask item display and dialogs
 - `confirmDialog` - Confirmation dialog translations
+- `search` - Subtask search field placeholder and dropdown labels
 - `export` - Excel export button, sheet names, column headers, and chart titles
 - `common` - Shared labels (e.g. drag-to-reorder handle)
 

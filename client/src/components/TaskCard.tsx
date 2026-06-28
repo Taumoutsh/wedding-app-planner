@@ -7,6 +7,7 @@ import { SubtaskFormModal } from './SubtaskFormModal';
 import { ConfirmDialog } from './ConfirmDialog';
 import { SortableList, DragHandle, type DragHandleProps } from './SortableList';
 import { useTranslation } from '../i18n/useTranslation';
+import { useNavigation } from '../contexts/NavigationContext';
 
 interface TaskCardProps {
   task: TaskDTO;
@@ -16,11 +17,20 @@ interface TaskCardProps {
 
 export const TaskCard = ({ task, onUpdate, dragHandle }: TaskCardProps) => {
   const { t } = useTranslation();
+  const { target } = useNavigation();
   const [showEditModal, setShowEditModal] = useState(false);
   const [showSubtaskModal, setShowSubtaskModal] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false); // Default to collapsed
   const [subtasks, setSubtasks] = useState<SubtaskDTO[]>(task.subtasks ?? []);
+
+  // Expand automatically when a search result points to a subtask in this task.
+  useEffect(() => {
+    if (target && target.taskId === task.id) {
+      setIsExpanded(true);
+      document.cookie = `task-${task.id}-expanded=true; path=/; max-age=31536000`;
+    }
+  }, [target, task.id]);
 
   // Keep local subtask order in sync when the task data is refreshed.
   useEffect(() => {
