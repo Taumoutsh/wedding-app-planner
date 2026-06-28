@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { SubtaskDTO } from '@wedding-planner/shared';
 import { subtaskApi } from '../services/api';
 import { useTranslation } from '../i18n/useTranslation';
+import { useNavigation } from '../contexts/NavigationContext';
 import { SubtaskFormModal } from './SubtaskFormModal';
 import { ConfirmDialog } from './ConfirmDialog';
 import { DragHandle, type DragHandleProps } from './SortableList';
@@ -14,8 +15,26 @@ interface SubtaskItemProps {
 
 export const SubtaskItem = ({ subtask, onUpdate, dragHandle }: SubtaskItemProps) => {
   const { t } = useTranslation();
+  const { target } = useNavigation();
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [highlight, setHighlight] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  // When a search result targets this subtask, scroll it into view and flash a
+  // highlight. The parent task/category have already expanded by this point.
+  useEffect(() => {
+    if (!target || target.subtaskId !== subtask.id) return;
+    const scrollTimer = setTimeout(() => {
+      rootRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 80);
+    setHighlight(true);
+    const clearTimer = setTimeout(() => setHighlight(false), 2500);
+    return () => {
+      clearTimeout(scrollTimer);
+      clearTimeout(clearTimer);
+    };
+  }, [target, subtask.id]);
 
   const handleDelete = async () => {
     try {
@@ -47,7 +66,10 @@ export const SubtaskItem = ({ subtask, onUpdate, dragHandle }: SubtaskItemProps)
 
   return (
     <>
-      <div className={`bg-gradient-to-r from-[#F5E6E8] to-[#F9EDE8] rounded p-2 sm:p-3 text-xs hover:from-[#F0DDE0] hover:to-[#F5E5DF] transition ${isPastDue ? 'opacity-40' : ''}`}>
+      <div
+        ref={rootRef}
+        className={`bg-gradient-to-r from-[#F5E6E8] to-[#F9EDE8] rounded p-2 sm:p-3 text-xs hover:from-[#F0DDE0] hover:to-[#F5E5DF] transition scroll-mt-32 ${isPastDue ? 'opacity-40' : ''} ${highlight ? 'ring-2 ring-[#D97B8A] ring-offset-2' : ''}`}
+      >
         <div className="bg-gradient-to-r from-[#D97B8A] to-[#E8B4A1] -mx-2 sm:-mx-3 -mt-2 sm:-mt-3 px-2 sm:px-3 py-1.5 sm:py-2 rounded-t flex items-start gap-2 mb-2">
           <DragHandle handle={dragHandle} className="p-0.5 text-white/80 hover:text-white" />
           <div className="flex-1">

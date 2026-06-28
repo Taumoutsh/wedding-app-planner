@@ -116,6 +116,11 @@ export const translations = {
     },
 
     // Export
+    search: {
+      placeholder: 'Search a subtask…',
+      noResults: 'No subtask found',
+      clear: 'Clear search',
+    },
     export: {
       button: 'Export',
       exporting: 'Exporting…',
@@ -264,6 +269,11 @@ export const translations = {
     },
 
     // Export
+    search: {
+      placeholder: 'Rechercher une sous-tâche…',
+      noResults: 'Aucune sous-tâche trouvée',
+      clear: 'Effacer la recherche',
+    },
     export: {
       button: 'Exporter',
       exporting: 'Export en cours…',
