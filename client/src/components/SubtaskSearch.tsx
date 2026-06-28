@@ -117,7 +117,8 @@ export const SubtaskSearch = ({ categories }: SubtaskSearchProps) => {
           onKeyDown={onKeyDown}
           placeholder={t('search.placeholder')}
           aria-label={t('search.placeholder')}
-          className="w-full pl-9 pr-9 py-2 rounded-md bg-white/95 text-sm text-gray-800 placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-white"
+          // text-base (16px) on mobile stops iOS Safari from auto-zooming on focus; text-sm on desktop.
+          className="w-full pl-9 pr-9 py-2 rounded-md bg-white/95 text-base sm:text-sm text-gray-800 placeholder-gray-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-white"
           role="combobox"
           aria-expanded={showDropdown}
           aria-controls="subtask-search-listbox"
