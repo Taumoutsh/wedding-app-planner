@@ -146,43 +146,69 @@ export async function exportToExcel(
 
   // ---- Detail sheet -------------------------------------------------------
   const detail = workbook.addWorksheet(t('export.detailSheet'));
+  // Place the +/- outline buttons on the parent row (above its children) so
+  // collapsing a category/task folds the rows beneath it.
+  detail.properties.outlineProperties = { summaryBelow: false, summaryRight: false };
+  // Secondary columns get an outline level so the whole set can be hidden with
+  // a single click of the column +/- button (element/progress/price/include stay).
   detail.columns = [
     { header: t('export.col.element'), key: 'element', width: 40 },
-    { header: t('export.col.comment'), key: 'comment', width: 32 },
-    { header: t('export.col.deadline'), key: 'deadline', width: 14 },
-    { header: t('export.col.assignee'), key: 'assignee', width: 18 },
+    { header: t('export.col.comment'), key: 'comment', width: 32, outlineLevel: 1 },
+    { header: t('export.col.deadline'), key: 'deadline', width: 14, outlineLevel: 1 },
+    { header: t('export.col.assignee'), key: 'assignee', width: 18, outlineLevel: 1 },
     { header: t('export.col.progress'), key: 'progress', width: 12 },
-    { header: t('export.col.weight'), key: 'weight', width: 9 },
+    { header: t('export.col.weight'), key: 'weight', width: 9, outlineLevel: 1 },
     { header: t('export.col.price'), key: 'price', width: 15 },
-    { header: t('export.col.link'), key: 'link', width: 34 },
+    { header: t('export.col.include'), key: 'include', width: 10 },
+    { header: t('export.col.link'), key: 'link', width: 34, outlineLevel: 1 },
   ];
   detail.getColumn('progress').numFmt = PCT_FMT;
   detail.getColumn('price').numFmt = PRICE_FMT;
   detail.getColumn('weight').numFmt = '0';
+  detail.getColumn('include').alignment = { horizontal: 'center' };
   styleHeaderRow(detail.getRow(1));
   detail.views = [{ state: 'frozen', ySplit: 1 }];
+  detail.autoFilter = { from: { row: 1, column: 1 }, to: { row: 1, column: 9 } };
+  detail.getRow(1).getCell('include').note = t('export.includeHint');
 
-  let grandTotal = 0;
+  const INCLUDE_YES = '✓';
+  const INCLUDE_NO = '✗';
+  const priceCol = detail.getColumn('price').letter;
+  const includeCol = detail.getColumn('include').letter;
+  const sumIncluded = (first: number, last: number) =>
+    `SUMIF(${includeCol}${first}:${includeCol}${last},"${INCLUDE_YES}",${priceCol}${first}:${priceCol}${last})`;
+
+  // Track subtask row spans so totals can be live SUMIF formulas that react to
+  // the include toggles instead of static numbers.
+  let firstSubRow = 0;
+  let lastSubRow = 0;
+  const categoryTotalRows: number[] = [];
 
   for (const category of categories) {
     const catRow = detail.addRow({
       element: category.name,
       progress: category.averageProgress,
-      price: category.totalPrice,
     });
+    catRow.outlineLevel = 0;
     fillRow(catRow, COLOR.category, COLOR.categoryText);
+
+    let catFirstSub = 0;
+    let catLastSub = 0;
 
     for (const task of category.tasks ?? ([] as TaskDTO[])) {
       const taskRow = detail.addRow({
         element: `    ${task.title}`,
         comment: task.comment,
         progress: task.averageProgress,
-        price: task.totalPrice,
       });
+      taskRow.outlineLevel = 1;
       fillRow(taskRow, COLOR.task);
 
+      let taskFirstSub = 0;
+      let taskLastSub = 0;
+
       for (const sub of task.subtasks ?? ([] as SubtaskDTO[])) {
-        detail.addRow({
+        const subRow = detail.addRow({
           element: `        ${sub.title}`,
           comment: sub.comment,
           deadline: formatDate(sub.date, locale),
@@ -190,40 +216,70 @@ export async function exportToExcel(
           progress: sub.progressPercentage,
           weight: sub.weight,
           price: subtaskPrice(sub),
+          include: INCLUDE_YES,
           link: sub.link ?? '',
         });
+        subRow.outlineLevel = 2;
+        const incCell = subRow.getCell('include');
+        incCell.dataValidation = {
+          type: 'list',
+          allowBlank: false,
+          formulae: [`"${INCLUDE_YES},${INCLUDE_NO}"`],
+          showErrorMessage: true,
+        };
+        incCell.alignment = { horizontal: 'center' };
+
+        const r = subRow.number;
+        if (!taskFirstSub) taskFirstSub = r;
+        taskLastSub = r;
+        if (!catFirstSub) catFirstSub = r;
+        catLastSub = r;
+        if (!firstSubRow) firstSubRow = r;
+        lastSubRow = r;
       }
 
-      // Subtotal per task = "by subcategory".
+      // Subtotal per task = "by subcategory", summing only included subtasks.
       const subtotalRow = detail.addRow({
         element: `    ${t('export.subtotal', { name: task.title })}`,
         progress: task.averageProgress,
-        price: task.totalPrice,
       });
+      subtotalRow.outlineLevel = 1;
+      subtotalRow.getCell('price').value = taskFirstSub
+        ? { formula: sumIncluded(taskFirstSub, taskLastSub) }
+        : 0;
       subtotalRow.eachCell((cell) => {
         cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: COLOR.subtotal } };
         cell.font = { italic: true };
       });
     }
 
-    // Total per category.
+    // Total per category. The SUMIF spans the whole category block; only the
+    // subtask rows carry an include flag, so subtotal rows are never counted.
     const catTotalRow = detail.addRow({
       element: t('export.categoryTotal', { name: category.name }),
       progress: category.averageProgress,
-      price: category.totalPrice,
     });
+    catTotalRow.outlineLevel = 0;
+    catTotalRow.getCell('price').value = catFirstSub
+      ? { formula: sumIncluded(catFirstSub, catLastSub) }
+      : 0;
     fillRow(catTotalRow, COLOR.grandTotal);
-    detail.addRow({});
-    grandTotal += category.totalPrice;
+    categoryTotalRows.push(catTotalRow.number);
+
+    const blankRow = detail.addRow({});
+    blankRow.outlineLevel = 0;
   }
 
-  grandTotal = Math.round(grandTotal * 100) / 100;
-  const grandRow = detail.addRow({ element: t('export.grandTotal'), price: grandTotal });
+  const grandRow = detail.addRow({ element: t('export.grandTotal') });
+  grandRow.outlineLevel = 0;
+  grandRow.getCell('price').value = firstSubRow ? { formula: sumIncluded(firstSubRow, lastSubRow) } : 0;
   grandRow.eachCell((cell) => {
     cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: COLOR.category } };
     cell.font = { bold: true, color: { argb: 'FFFFFFFF' }, size: 12 };
   });
   grandRow.height = 24;
+  const grandTotalRowNumber = grandRow.number;
+  const detailRef = `'${t('export.detailSheet').replace(/'/g, "''")}'`;
 
   // ---- Summary sheet ------------------------------------------------------
   const summary = workbook.addWorksheet(t('export.summarySheet'));
@@ -238,17 +294,18 @@ export async function exportToExcel(
   summary.getColumn('price').numFmt = PRICE_FMT;
   styleHeaderRow(summary.getRow(1));
 
-  for (const category of categories) {
+  categories.forEach((category, i) => {
     const tasks = category.tasks ?? [];
     const subtaskCount = tasks.reduce((sum, task) => sum + (task.subtasks?.length ?? 0), 0);
-    summary.addRow({
+    const row = summary.addRow({
       category: category.name,
       tasks: tasks.length,
       subtasks: subtaskCount,
       progress: category.averageProgress,
-      price: category.totalPrice,
     });
-  }
+    // Mirror the Detail category total so the include toggles flow through here too.
+    row.getCell('price').value = { formula: `${detailRef}!${priceCol}${categoryTotalRows[i]}` };
+  });
 
   // Overall weighted-average progress across every subtask (matches the app).
   const allSubtasks = categories.flatMap((c) => (c.tasks ?? []).flatMap((task) => task.subtasks ?? []));
@@ -264,8 +321,8 @@ export async function exportToExcel(
     tasks: totalTasks,
     subtasks: allSubtasks.length,
     progress: overallProgress,
-    price: grandTotal,
   });
+  summaryTotalRow.getCell('price').value = { formula: `${detailRef}!${priceCol}${grandTotalRowNumber}` };
   fillRow(summaryTotalRow, COLOR.grandTotal);
 
   // ---- Charts (embedded as images) ----------------------------------------
