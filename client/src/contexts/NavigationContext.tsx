@@ -12,6 +12,9 @@ export interface NavTarget {
 interface NavigationContextValue {
   target: NavTarget | null;
   navigateToSubtask: (categoryId: number, taskId: number, subtaskId: number) => void;
+  // Cleared once the target subtask has been reached, so later folding/unfolding
+  // doesn't re-trigger the navigation.
+  clearTarget: () => void;
 }
 
 const NavigationContext = createContext<NavigationContextValue | undefined>(undefined);
@@ -26,7 +29,12 @@ export const NavigationProvider = ({ children }: { children: ReactNode }) => {
     []
   );
 
-  const value = useMemo(() => ({ target, navigateToSubtask }), [target, navigateToSubtask]);
+  const clearTarget = useCallback(() => setTarget(null), []);
+
+  const value = useMemo(
+    () => ({ target, navigateToSubtask, clearTarget }),
+    [target, navigateToSubtask, clearTarget]
+  );
 
   return <NavigationContext.Provider value={value}>{children}</NavigationContext.Provider>;
 };

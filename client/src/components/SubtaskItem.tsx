@@ -15,7 +15,7 @@ interface SubtaskItemProps {
 
 export const SubtaskItem = ({ subtask, onUpdate, dragHandle }: SubtaskItemProps) => {
   const { t } = useTranslation();
-  const { target } = useNavigation();
+  const { target, clearTarget } = useNavigation();
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [highlight, setHighlight] = useState(false);
@@ -23,18 +23,23 @@ export const SubtaskItem = ({ subtask, onUpdate, dragHandle }: SubtaskItemProps)
 
   // When a search result targets this subtask, scroll it into view and flash a
   // highlight. The parent task/category have already expanded by this point.
+  // We then clear the target so later folding/unfolding doesn't re-navigate.
   useEffect(() => {
     if (!target || target.subtaskId !== subtask.id) return;
-    const scrollTimer = setTimeout(() => {
-      rootRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 80);
     setHighlight(true);
-    const clearTimer = setTimeout(() => setHighlight(false), 2500);
-    return () => {
-      clearTimeout(scrollTimer);
-      clearTimeout(clearTimer);
-    };
-  }, [target, subtask.id]);
+    const el = rootRef.current;
+    setTimeout(() => {
+      el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 80);
+    clearTarget();
+  }, [target, subtask.id, clearTarget]);
+
+  // Fade the highlight out on its own timer, independent of the navigation state.
+  useEffect(() => {
+    if (!highlight) return;
+    const timer = setTimeout(() => setHighlight(false), 2500);
+    return () => clearTimeout(timer);
+  }, [highlight]);
 
   const handleDelete = async () => {
     try {
