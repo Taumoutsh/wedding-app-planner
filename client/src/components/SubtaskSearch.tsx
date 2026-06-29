@@ -30,6 +30,7 @@ export const SubtaskSearch = ({ categories }: SubtaskSearchProps) => {
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Flat, searchable index of every loaded subtask with its parent path.
   const entries = useMemo<Entry[]>(() => {
@@ -76,6 +77,8 @@ export const SubtaskSearch = ({ categories }: SubtaskSearchProps) => {
   const select = (entry: Entry) => {
     navigateToSubtask(entry.categoryId, entry.taskId, entry.subtaskId);
     setOpen(false);
+    // Drop focus so the mobile on-screen keyboard dismisses after selecting.
+    inputRef.current?.blur();
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -107,6 +110,7 @@ export const SubtaskSearch = ({ categories }: SubtaskSearchProps) => {
           </svg>
         </span>
         <input
+          ref={inputRef}
           type="text"
           value={query}
           onChange={(e) => {
