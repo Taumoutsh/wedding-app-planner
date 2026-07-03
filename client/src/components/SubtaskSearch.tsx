@@ -7,6 +7,87 @@ import { useNavigation } from '../contexts/NavigationContext';
 const normalize = (s: string) =>
   s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
+// French + English month names (accents already stripped by normalize).
+const MONTH_NAMES: Array<[string, number]> = [
+  ['janvier', 1], ['fevrier', 2], ['mars', 3], ['avril', 4], ['mai', 5], ['juin', 6],
+  ['juillet', 7], ['aout', 8], ['septembre', 9], ['octobre', 10], ['novembre', 11], ['decembre', 12],
+  ['january', 1], ['february', 2], ['march', 3], ['april', 4], ['may', 5], ['june', 6],
+  ['july', 7], ['august', 8], ['september', 9], ['october', 10], ['november', 11], ['december', 12],
+];
+
+// Resolve a token to a month number by prefix (min 3 chars) when it is unambiguous:
+// "juil" -> 7, "sept" -> 9, "mar" -> 3 (mars/march both month 3), etc.
+const monthFromToken = (tokenNorm: string): number | null => {
+  if (tokenNorm.length < 3) return null;
+  const months = new Set<number>();
+  for (const [name, m] of MONTH_NAMES) {
+    if (name.startsWith(tokenNorm)) months.add(m);
+  }
+  return months.size === 1 ? [...months][0] : null;
+};
+
+interface DateQuery {
+  day?: number;
+  month?: number;
+  year?: number;
+}
+
+// Parse a query as a date. Supports DD/MM, DD/MM/YYYY (also . or - separators, 2-digit
+// years), a standalone 4-digit year, and natural language such as "4 juillet 2026",
+// "juillet 2026", "1er août". Returns null when the query is not date-like.
+const parseDateQuery = (raw: string): DateQuery | null => {
+  const q = raw.trim();
+  if (!q) return null;
+
+  const numeric = q.match(/^(\d{1,2})[/.\-](\d{1,2})(?:[/.\-](\d{2,4}))?$/);
+  if (numeric) {
+    const day = parseInt(numeric[1], 10);
+    const month = parseInt(numeric[2], 10);
+    let year = numeric[3] !== undefined ? parseInt(numeric[3], 10) : undefined;
+    if (year !== undefined && year < 100) year += 2000;
+    if (month < 1 || month > 12 || day < 1 || day > 31) return null;
+    return { day, month, year };
+  }
+
+  if (/^\d{4}$/.test(q)) return { year: parseInt(q, 10) };
+
+  const tokens = normalize(q).split(/[\s,]+/).filter(Boolean);
+  let day: number | undefined;
+  let month: number | undefined;
+  let year: number | undefined;
+  for (const tok of tokens) {
+    if (/^\d{4}$/.test(tok)) {
+      year = parseInt(tok, 10);
+      continue;
+    }
+    // A day number, optionally with a French ordinal suffix (1er, 2e, 2eme...).
+    const dayMatch = tok.match(/^(\d{1,2})(?:er|ere|eme|e)?$/);
+    if (dayMatch) {
+      const n = parseInt(dayMatch[1], 10);
+      if (n < 1 || n > 31) return null;
+      day = n;
+      continue;
+    }
+    const m = monthFromToken(tok);
+    if (m) {
+      month = m;
+      continue;
+    }
+    // An unrecognised word means this isn't a date query.
+    return null;
+  }
+
+  if (month === undefined && year === undefined) return null;
+  return { day, month, year };
+};
+
+const matchesDate = (d: Date, q: DateQuery): boolean => {
+  if (q.day !== undefined && d.getDate() !== q.day) return false;
+  if (q.month !== undefined && d.getMonth() + 1 !== q.month) return false;
+  if (q.year !== undefined && d.getFullYear() !== q.year) return false;
+  return true;
+};
+
 interface Entry {
   categoryId: number;
   taskId: number;
@@ -15,6 +96,7 @@ interface Entry {
   categoryName: string;
   taskTitle: string;
   norm: string;
+  date: Date | null;
 }
 
 const MAX_RESULTS = 50;
@@ -24,13 +106,14 @@ interface SubtaskSearchProps {
 }
 
 export const SubtaskSearch = ({ categories }: SubtaskSearchProps) => {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const { navigateToSubtask } = useNavigation();
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const locale = language === 'fr' ? 'fr-FR' : 'en-US';
 
   // Flat, searchable index of every loaded subtask with its parent path.
   const entries = useMemo<Entry[]>(() => {
@@ -46,6 +129,7 @@ export const SubtaskSearch = ({ categories }: SubtaskSearchProps) => {
             categoryName: cat.name,
             taskTitle: task.title,
             norm: normalize(sub.title),
+            date: sub.date ? new Date(sub.date) : null,
           });
         }
       }
@@ -53,10 +137,26 @@ export const SubtaskSearch = ({ categories }: SubtaskSearchProps) => {
     return list;
   }, [categories]);
 
+  // Match by title, and also by deadline date when the query looks like a date.
+  // Title hits come first; the union is de-duplicated by subtask id.
   const results = useMemo<Entry[]>(() => {
-    const q = normalize(query.trim());
-    if (!q) return [];
-    return entries.filter((e) => e.norm.includes(q)).slice(0, MAX_RESULTS);
+    const nq = normalize(query.trim());
+    if (!nq) return [];
+    const dateQuery = parseDateQuery(query);
+
+    const titleMatches = entries.filter((e) => e.norm.includes(nq));
+    const dateMatches = dateQuery
+      ? entries.filter((e) => e.date && matchesDate(e.date, dateQuery))
+      : [];
+
+    const seen = new Set<number>();
+    const merged: Entry[] = [];
+    for (const e of [...titleMatches, ...dateMatches]) {
+      if (seen.has(e.subtaskId)) continue;
+      seen.add(e.subtaskId);
+      merged.push(e);
+    }
+    return merged.slice(0, MAX_RESULTS);
   }, [entries, query]);
 
   useEffect(() => {
@@ -169,7 +269,14 @@ export const SubtaskSearch = ({ categories }: SubtaskSearchProps) => {
                   i === activeIndex ? 'bg-[#F5E6E8]' : 'hover:bg-gray-50'
                 }`}
               >
-                <div className="text-sm font-medium text-gray-900 truncate">{entry.title}</div>
+                <div className="flex items-baseline justify-between gap-2">
+                  <span className="text-sm font-medium text-gray-900 truncate">{entry.title}</span>
+                  {entry.date && (
+                    <span className="text-xs text-gray-400 whitespace-nowrap flex-shrink-0">
+                      {entry.date.toLocaleDateString(locale)}
+                    </span>
+                  )}
+                </div>
                 <div className="text-xs text-gray-500 truncate">
                   {entry.categoryName} <span className="text-gray-400">›</span> {entry.taskTitle}
                 </div>

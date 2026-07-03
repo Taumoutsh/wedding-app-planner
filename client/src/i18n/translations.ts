@@ -117,7 +117,7 @@ export const translations = {
 
     // Export
     search: {
-      placeholder: 'Search a subtask…',
+      placeholder: 'Search a subtask by name or date…',
       noResults: 'No subtask found',
       clear: 'Clear search',
     },
@@ -270,7 +270,7 @@ export const translations = {
 
     // Export
     search: {
-      placeholder: 'Rechercher une sous-tâche…',
+      placeholder: 'Rechercher une sous-tâche par nom ou date…',
       noResults: 'Aucune sous-tâche trouvée',
       clear: 'Effacer la recherche',
     },
