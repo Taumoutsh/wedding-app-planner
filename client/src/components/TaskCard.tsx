@@ -13,9 +13,12 @@ interface TaskCardProps {
   task: TaskDTO;
   onUpdate: () => void;
   dragHandle?: DragHandleProps;
+  // When false, drag-and-drop of subtasks is disabled (used in "remaining only"
+  // mode where the subtask list is filtered).
+  sortable?: boolean;
 }
 
-export const TaskCard = ({ task, onUpdate, dragHandle }: TaskCardProps) => {
+export const TaskCard = ({ task, onUpdate, dragHandle, sortable = true }: TaskCardProps) => {
   const { t } = useTranslation();
   const { target } = useNavigation();
   const [showEditModal, setShowEditModal] = useState(false);
@@ -170,16 +173,24 @@ export const TaskCard = ({ task, onUpdate, dragHandle }: TaskCardProps) => {
         {isExpanded && (
           <div className="border-t border-gray-200 p-2 sm:p-4">
             {subtasks.length > 0 ? (
-              <SortableList
-                items={subtasks}
-                getId={(subtask) => subtask.id}
-                onReorder={handleReorderSubtasks}
-                strategy="vertical"
-                className="space-y-2"
-                renderItem={(subtask, subtaskDragHandle) => (
-                  <SubtaskItem subtask={subtask} onUpdate={onUpdate} dragHandle={subtaskDragHandle} />
-                )}
-              />
+              sortable ? (
+                <SortableList
+                  items={subtasks}
+                  getId={(subtask) => subtask.id}
+                  onReorder={handleReorderSubtasks}
+                  strategy="vertical"
+                  className="space-y-2"
+                  renderItem={(subtask, subtaskDragHandle) => (
+                    <SubtaskItem subtask={subtask} onUpdate={onUpdate} dragHandle={subtaskDragHandle} />
+                  )}
+                />
+              ) : (
+                <div className="space-y-2">
+                  {subtasks.map((subtask) => (
+                    <SubtaskItem key={subtask.id} subtask={subtask} onUpdate={onUpdate} />
+                  ))}
+                </div>
+              )
             ) : (
               <p className="text-xs text-gray-500 text-center py-2">{t('taskCard.noSubtasks')}</p>
             )}

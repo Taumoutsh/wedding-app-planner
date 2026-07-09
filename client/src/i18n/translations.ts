@@ -27,6 +27,10 @@ export const translations = {
       loading: 'Loading...',
       noCategoriesEmpty: 'No categories yet. Create your first one!',
       createCategory: '+ Create Category',
+      remainingOnly: 'In progress',
+      todoListButton: 'Todo list',
+      backToAll: 'Back',
+      allDone: 'Nothing left — everything is complete! 🎉',
     },
 
     // CategoryCard
@@ -103,10 +107,19 @@ export const translations = {
     subtaskItem: {
       editSubtask: 'Edit subtask',
       deleteSubtask: 'Delete subtask',
+      addToTodo: 'Add to todo list',
+      removeFromTodo: 'Remove from todo list',
       dateLabel: 'Date:',
       linkLabel: 'Link',
       deleteTitle: 'Delete Subtask',
       deleteMessage: 'Are you sure you want to delete "{title}"?',
+    },
+
+    // TodoListView
+    todo: {
+      viewTitle: 'My todo list',
+      empty: 'Your todo list is empty. Add subtasks with the ☑ button on each one.',
+      check: 'Remove from todo list',
     },
 
     // ConfirmDialog
@@ -180,6 +193,10 @@ export const translations = {
       loading: 'Chargement...',
       noCategoriesEmpty: 'Aucune catégorie pour le moment. Créez la première !',
       createCategory: '+ Créer une catégorie',
+      remainingOnly: 'En cours',
+      todoListButton: 'Liste de tâches',
+      backToAll: 'Retour',
+      allDone: 'Plus rien à faire — tout est terminé ! 🎉',
     },
 
     // CategoryCard
@@ -256,10 +273,19 @@ export const translations = {
     subtaskItem: {
       editSubtask: 'Modifier la sous-tâche',
       deleteSubtask: 'Supprimer la sous-tâche',
+      addToTodo: 'Ajouter à la liste de tâches',
+      removeFromTodo: 'Retirer de la liste de tâches',
       dateLabel: 'Date :',
       linkLabel: 'Lien',
       deleteTitle: 'Supprimer la sous-tâche',
       deleteMessage: 'Êtes-vous sûr de vouloir supprimer « {title} » ?',
+    },
+
+    // TodoListView
+    todo: {
+      viewTitle: 'Ma liste de tâches',
+      empty: 'Votre liste de tâches est vide. Ajoutez des sous-tâches avec le bouton ☑ sur chacune.',
+      check: 'Retirer de la liste de tâches',
     },
 
     // ConfirmDialog

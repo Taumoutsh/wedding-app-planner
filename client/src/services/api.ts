@@ -68,6 +68,8 @@ export const subtaskApi = {
     api.put<SubtaskDTO>(`/subtasks/${id}`, data),
   delete: (id: number) => api.delete(`/subtasks/${id}`),
   reorder: (orderedIds: number[]) => api.put('/subtasks/reorder', { orderedIds }),
+  setTodo: (id: number, inTodoList: boolean) =>
+    api.put<SubtaskDTO>(`/subtasks/${id}/todo`, { inTodoList }),
 };
 
 export default api;

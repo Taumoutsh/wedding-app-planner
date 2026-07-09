@@ -41,6 +41,15 @@ export const SubtaskItem = ({ subtask, onUpdate, dragHandle }: SubtaskItemProps)
     return () => clearTimeout(timer);
   }, [highlight]);
 
+  const handleToggleTodo = async () => {
+    try {
+      await subtaskApi.setTodo(subtask.id, !subtask.inTodoList);
+      onUpdate();
+    } catch (error) {
+      console.error('Failed to update todo state:', error);
+    }
+  };
+
   const handleDelete = async () => {
     try {
       await subtaskApi.delete(subtask.id);
@@ -81,6 +90,22 @@ export const SubtaskItem = ({ subtask, onUpdate, dragHandle }: SubtaskItemProps)
             <h4 className="font-semibold text-white">{subtask.title}</h4>
           </div>
           <div className="flex gap-1">
+            <button
+              onClick={handleToggleTodo}
+              className={`p-1 rounded transition ${subtask.inTodoList ? 'bg-white/30 text-white' : 'text-white hover:text-gray-100'}`}
+              title={subtask.inTodoList ? t('subtaskItem.removeFromTodo') : t('subtaskItem.addToTodo')}
+              aria-pressed={subtask.inTodoList}
+            >
+              {subtask.inTodoList ? (
+                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2m-1.5 0a1.5 1.5 0 01-1.5 1.5h-1A1.5 1.5 0 019 5m0 0a1.5 1.5 0 011.5-1.5h1A1.5 1.5 0 0113 5m3.2 6.3l-4.2 4.2-2.2-2.2a1 1 0 00-1.4 1.4l2.9 2.9a1 1 0 001.4 0l4.9-4.9a1 1 0 00-1.4-1.4z" />
+                </svg>
+              ) : (
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                </svg>
+              )}
+            </button>
             <button
               onClick={() => setShowEditModal(true)}
               className="p-1 text-white hover:text-gray-100 rounded transition"
