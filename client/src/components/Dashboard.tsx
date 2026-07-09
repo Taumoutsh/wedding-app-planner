@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { categoryApi } from '../services/api';
 import { useTranslation } from '../i18n/useTranslation';
@@ -7,6 +7,7 @@ import { CategoryCard } from './CategoryCard';
 import { CategoryFormModal } from './CategoryFormModal';
 import { SortableList } from './SortableList';
 import { SubtaskSearch } from './SubtaskSearch';
+import { TodoListView } from './TodoListView';
 import { NavigationProvider } from '../contexts/NavigationContext';
 import { exportToExcel } from '../utils/exportToExcel';
 
@@ -18,6 +19,31 @@ export const Dashboard = () => {
   const [showCategoryModal, setShowCategoryModal] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [remainingOnly, setRemainingOnly] = useState<boolean>(
+    () => localStorage.getItem('remainingOnly') === 'true'
+  );
+  const [showTodoList, setShowTodoList] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem('remainingOnly', String(remainingOnly));
+  }, [remainingOnly]);
+
+  // In "remaining only" mode, hide anything already at 100%: completed subtasks,
+  // completed tasks, and fully-complete categories.
+  const visibleCategories = useMemo(() => {
+    if (!remainingOnly) return categories;
+    return categories
+      .map((cat) => ({
+        ...cat,
+        tasks: (cat.tasks ?? [])
+          .filter((task) => task.averageProgress < 100)
+          .map((task) => ({
+            ...task,
+            subtasks: (task.subtasks ?? []).filter((st) => st.progressPercentage < 100),
+          })),
+      }))
+      .filter((cat) => cat.averageProgress < 100);
+  }, [categories, remainingOnly]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -130,6 +156,19 @@ export const Dashboard = () => {
                 <div className="w-px h-5 sm:h-6 bg-white/30"></div>
                 {categories.length > 0 && (
                   <button
+                    onClick={() => setShowTodoList((v) => !v)}
+                    aria-pressed={showTodoList}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm rounded-md transition font-medium ${showTodoList ? 'bg-white text-[#D97B8A]' : 'text-white bg-white/10 hover:bg-white/20'}`}
+                    title={t('dashboard.todoListButton')}
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                    </svg>
+                    {t('dashboard.todoListButton')}
+                  </button>
+                )}
+                {categories.length > 0 && (
+                  <button
                     onClick={handleExport}
                     disabled={exporting}
                     className="flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm text-white bg-white/10 hover:bg-white/20 rounded-md transition font-medium disabled:opacity-60"
@@ -163,6 +202,18 @@ export const Dashboard = () => {
                 <div className="w-px h-4 bg-white/30"></div>
                 {categories.length > 0 && (
                   <button
+                    onClick={() => setShowTodoList((v) => !v)}
+                    aria-pressed={showTodoList}
+                    className={`p-2 rounded-md transition ${showTodoList ? 'bg-white text-[#D97B8A]' : 'text-white hover:bg-white/20'}`}
+                    title={t('dashboard.todoListButton')}
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                    </svg>
+                  </button>
+                )}
+                {categories.length > 0 && (
+                  <button
                     onClick={handleExport}
                     disabled={exporting}
                     className="p-2 text-white hover:bg-white/20 rounded-md transition disabled:opacity-60"
@@ -187,7 +238,8 @@ export const Dashboard = () => {
           )}
 
           {/* Stats section - grid layout changes based on scroll state */}
-          <div className={`grid items-center ${isScrolled ? 'grid-cols-12 gap-2' : 'grid-cols-1 sm:grid-cols-3 gap-4'}`}>
+          <div className="flex items-center gap-3">
+          <div className={`grid items-center flex-1 min-w-0 ${isScrolled ? 'grid-cols-12 gap-2' : 'grid-cols-1 sm:grid-cols-3 gap-4'}`}>
             {isScrolled ? (
               <>
                 {/* Progress bar section - 4 columns */}
@@ -269,7 +321,26 @@ export const Dashboard = () => {
             )}
           </div>
 
-          {categories.length > 0 && <SubtaskSearch categories={categories} />}
+          {categories.length > 0 && !showTodoList && (
+            <button
+              onClick={() => setRemainingOnly((v) => !v)}
+              aria-pressed={remainingOnly}
+              className="flex-shrink-0 flex items-center gap-2 px-2.5 py-1.5 rounded-md bg-white/10 hover:bg-white/20 text-white text-xs sm:text-sm font-medium transition"
+              title={t('dashboard.remainingOnly')}
+            >
+              <span
+                className={`relative inline-flex h-4 w-7 items-center rounded-full transition ${remainingOnly ? 'bg-white' : 'bg-white/30'}`}
+              >
+                <span
+                  className={`inline-block h-3 w-3 transform rounded-full bg-[#D97B8A] transition ${remainingOnly ? 'translate-x-3.5' : 'translate-x-0.5'}`}
+                />
+              </span>
+              <span className="whitespace-nowrap">{t('dashboard.remainingOnly')}</span>
+            </button>
+          )}
+          </div>
+
+          {categories.length > 0 && !showTodoList && <SubtaskSearch categories={categories} />}
         </div>
       </header>
 
@@ -283,6 +354,30 @@ export const Dashboard = () => {
             >
               {t('dashboard.createCategory')}
             </button>
+          </div>
+        ) : showTodoList ? (
+          <TodoListView
+            categories={categories}
+            onUpdate={loadCategories}
+            onBack={() => setShowTodoList(false)}
+          />
+        ) : remainingOnly ? (
+          <div className="space-y-3 sm:space-y-6">
+            {visibleCategories.length === 0 ? (
+              <div className="text-center py-16">
+                <div className="text-5xl mb-4">🎉</div>
+                <p className="text-gray-600">{t('dashboard.allDone')}</p>
+              </div>
+            ) : (
+              visibleCategories.map((category) => (
+                <CategoryCard
+                  key={category.id}
+                  category={category}
+                  onUpdate={loadCategories}
+                  sortable={false}
+                />
+              ))
+            )}
           </div>
         ) : (
           <div className="space-y-3 sm:space-y-6">

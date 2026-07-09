@@ -13,9 +13,12 @@ interface CategoryCardProps {
   category: CategoryDTO;
   onUpdate: () => void;
   dragHandle?: DragHandleProps;
+  // When false, drag-and-drop is disabled (e.g. in "remaining only" mode where
+  // the task list is filtered and reordering would corrupt positions).
+  sortable?: boolean;
 }
 
-export const CategoryCard = ({ category, onUpdate, dragHandle }: CategoryCardProps) => {
+export const CategoryCard = ({ category, onUpdate, dragHandle, sortable = true }: CategoryCardProps) => {
   const { t } = useTranslation();
   const { target } = useNavigation();
   const [showEditModal, setShowEditModal] = useState(false);
@@ -169,16 +172,24 @@ export const CategoryCard = ({ category, onUpdate, dragHandle }: CategoryCardPro
               </div>
             ) : (
               <>
-                <SortableList
-                  items={tasks}
-                  getId={(task) => task.id}
-                  onReorder={handleReorderTasks}
-                  strategy="grid"
-                  className="grid grid-cols-1 lg:grid-cols-2 gap-2 sm:gap-4 mb-4"
-                  renderItem={(task, taskDragHandle) => (
-                    <TaskCard task={task} onUpdate={onUpdate} dragHandle={taskDragHandle} />
-                  )}
-                />
+                {sortable ? (
+                  <SortableList
+                    items={tasks}
+                    getId={(task) => task.id}
+                    onReorder={handleReorderTasks}
+                    strategy="grid"
+                    className="grid grid-cols-1 lg:grid-cols-2 gap-2 sm:gap-4 mb-4"
+                    renderItem={(task, taskDragHandle) => (
+                      <TaskCard task={task} onUpdate={onUpdate} dragHandle={taskDragHandle} />
+                    )}
+                  />
+                ) : (
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 sm:gap-4 mb-4">
+                    {tasks.map((task) => (
+                      <TaskCard key={task.id} task={task} onUpdate={onUpdate} sortable={false} />
+                    ))}
+                  </div>
+                )}
                 <button
                   onClick={() => setShowTaskModal(true)}
                   className="w-full px-3 sm:px-4 py-2 border-2 border-dashed border-gray-300 text-gray-600 rounded-md hover:border-[#D97B8A] hover:text-[#D97B8A] transition"

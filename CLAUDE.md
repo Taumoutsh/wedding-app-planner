@@ -110,6 +110,35 @@ The overall progress of the wedding will be represented by the weighted average 
   view with a brief highlight ring
 - Strings localized via the i18n `search` namespace
 
+## View Modes (Remaining & Todo list)
+Two header controls (shown above the search bar when there is at least one
+category) switch what the dashboard shows:
+
+### Remaining only
+- A toggle in the header. When on, everything already at 100% is hidden:
+  completed subtasks (even inside a still-incomplete task), tasks whose average
+  is 100%, and fully-complete categories. Filtering happens in `Dashboard` via
+  `visibleCategories` (a filtered deep copy of the loaded data)
+- The toggle state is persisted in `localStorage` under `remainingOnly`
+- Drag-and-drop is disabled while filtering (reordering a filtered subset would
+  corrupt `position`s): `CategoryCard`/`TaskCard` take a `sortable` prop and
+  render plain lists (no `SortableList`, no drag handle) when it is `false`
+- When nothing remains, a celebratory "all done" message is shown
+
+### Todo list
+- Each subtask has a toggle button (next to Edit) that adds/removes it from a
+  shared todo list, backed by an `inTodoList` boolean column on `Subtask`
+  (migration `add_todo_list_flag`). The flag is global (same for every login and
+  device), toggled via `PUT /api/subtasks/:id/todo` with `{ inTodoList: boolean }`
+  (`subtaskApi.setTodo`)
+- A "Todo list" header button opens `TodoListView` (a separate view, with a
+  "Back" control) listing only flagged subtasks as a checklist — no comments,
+  sorted by deadline (soonest first, undated last), each row showing the
+  `Category › Task` breadcrumb, deadline, and progress
+- Checking an item off removes it from the list (sets `inTodoList` false); it
+  does not change the subtask's progress
+- Strings localized via the i18n `dashboard`, `subtaskItem`, and `todo` namespaces
+
 ## CRUD Operations
 - Categories, tasks, and subtasks can be created, added, or deleted
 - When deleting, all child elements are also deleted (add a confirmation popup)
@@ -193,6 +222,7 @@ Translations are organized by component/feature:
 - `subtaskItem` - Subtask item display and dialogs
 - `confirmDialog` - Confirmation dialog translations
 - `search` - Subtask search field placeholder and dropdown labels
+- `todo` - Todo list view title, empty state, and check action
 - `export` - Excel export button, sheet names, column headers, and chart titles
 - `common` - Shared labels (e.g. drag-to-reorder handle)
 

@@ -40,6 +40,7 @@ export interface Subtask {
   link?: string | null;
   urgent: boolean;
   important: boolean;
+  inTodoList: boolean;
   position: number;
   createdAt: Date;
   updatedAt: Date;
@@ -122,6 +123,10 @@ export interface UpdateSubtaskRequest {
 
 export interface ReorderRequest {
   orderedIds: number[];
+}
+
+export interface SetTodoRequest {
+  inTodoList: boolean;
 }
 
 export interface ErrorResponse {

@@ -1,7 +1,7 @@
 import { Response } from 'express';
 import { prisma } from '../utils/db';
 import { AuthRequest } from '../middleware/auth';
-import { CreateSubtaskRequest, UpdateSubtaskRequest, SubtaskDTO, ReorderRequest } from '@wedding-planner/shared';
+import { CreateSubtaskRequest, UpdateSubtaskRequest, SubtaskDTO, ReorderRequest, SetTodoRequest } from '@wedding-planner/shared';
 
 export const createSubtask = async (req: AuthRequest, res: Response) => {
   try {
@@ -105,6 +105,33 @@ export const deleteSubtask = async (req: AuthRequest, res: Response) => {
     res.status(500).json({
       error: 'Internal Server Error',
       message: 'Failed to delete subtask',
+    });
+  }
+};
+
+export const setSubtaskTodo = async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { inTodoList } = req.body as SetTodoRequest;
+
+    if (typeof inTodoList !== 'boolean') {
+      return res.status(400).json({
+        error: 'Bad Request',
+        message: 'inTodoList must be a boolean',
+      });
+    }
+
+    const subtask = await prisma.subtask.update({
+      where: { id: parseInt(id) },
+      data: { inTodoList },
+    });
+
+    res.json(subtask);
+  } catch (error) {
+    console.error('Set subtask todo error:', error);
+    res.status(500).json({
+      error: 'Internal Server Error',
+      message: 'Failed to update subtask todo state',
     });
   }
 };
