@@ -110,6 +110,16 @@ The overall progress of the wedding will be represented by the weighted average 
   view with a brief highlight ring
 - Strings localized via the i18n `search` namespace
 
+## Hide Spending
+- A header button (eye icon, next to the "Todo list" button) toggles whether
+  euro amounts are shown. When off, every euro figure — the header total budget,
+  each category total, each task total, and each subtask price — is replaced by a
+  `•••` mask (`SPENDING_MASK`); progress figures are unaffected
+- State is shared via `BudgetContext` (`client/src/contexts/BudgetContext.tsx`),
+  owned by `Dashboard` and persisted in `localStorage` under `showSpending`
+  (default shown). Cards read it with the `useBudget()` hook
+- Labels localized via the i18n `dashboard.hideSpending` / `dashboard.showSpending`
+
 ## View Modes (Remaining & Todo list)
 Two header controls (shown above the search bar when there is at least one
 category) switch what the dashboard shows:

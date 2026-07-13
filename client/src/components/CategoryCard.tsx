@@ -8,6 +8,7 @@ import { ConfirmDialog } from './ConfirmDialog';
 import { SortableList, DragHandle, type DragHandleProps } from './SortableList';
 import { useTranslation } from '../i18n/useTranslation';
 import { useNavigation } from '../contexts/NavigationContext';
+import { useBudget, SPENDING_MASK } from '../contexts/BudgetContext';
 
 interface CategoryCardProps {
   category: CategoryDTO;
@@ -21,6 +22,7 @@ interface CategoryCardProps {
 export const CategoryCard = ({ category, onUpdate, dragHandle, sortable = true }: CategoryCardProps) => {
   const { t } = useTranslation();
   const { target } = useNavigation();
+  const { showSpending } = useBudget();
   const [showEditModal, setShowEditModal] = useState(false);
   const [showTaskModal, setShowTaskModal] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -128,7 +130,7 @@ export const CategoryCard = ({ category, onUpdate, dragHandle, sortable = true }
                   <div className="flex items-center gap-1.5 text-xs sm:text-sm whitespace-nowrap">
                     <span className="text-white/80">💰</span>
                     <span className="font-semibold text-white">
-                      {(category.totalPrice || 0).toFixed(2)}€
+                      {showSpending ? `${(category.totalPrice || 0).toFixed(2)}€` : SPENDING_MASK}
                     </span>
                   </div>
                 </div>

@@ -3,6 +3,7 @@ import type { SubtaskDTO } from '@wedding-planner/shared';
 import { subtaskApi } from '../services/api';
 import { useTranslation } from '../i18n/useTranslation';
 import { useNavigation } from '../contexts/NavigationContext';
+import { useBudget, SPENDING_MASK } from '../contexts/BudgetContext';
 import { SubtaskFormModal } from './SubtaskFormModal';
 import { ConfirmDialog } from './ConfirmDialog';
 import { DragHandle, type DragHandleProps } from './SortableList';
@@ -16,6 +17,7 @@ interface SubtaskItemProps {
 export const SubtaskItem = ({ subtask, onUpdate, dragHandle }: SubtaskItemProps) => {
   const { t } = useTranslation();
   const { target, clearTarget } = useNavigation();
+  const { showSpending } = useBudget();
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [highlight, setHighlight] = useState(false);
@@ -180,7 +182,7 @@ export const SubtaskItem = ({ subtask, onUpdate, dragHandle }: SubtaskItemProps)
                 <div className="flex items-center gap-1.5">
                   <span className="text-gray-500 text-xs">💰</span>
                   <span className="font-semibold text-gray-900 text-xs whitespace-nowrap">
-                    {subtask.price.toFixed(2)}€
+                    {showSpending ? `${subtask.price.toFixed(2)}€` : SPENDING_MASK}
                   </span>
                 </div>
               </>

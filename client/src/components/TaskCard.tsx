@@ -8,6 +8,7 @@ import { ConfirmDialog } from './ConfirmDialog';
 import { SortableList, DragHandle, type DragHandleProps } from './SortableList';
 import { useTranslation } from '../i18n/useTranslation';
 import { useNavigation } from '../contexts/NavigationContext';
+import { useBudget, SPENDING_MASK } from '../contexts/BudgetContext';
 
 interface TaskCardProps {
   task: TaskDTO;
@@ -21,6 +22,7 @@ interface TaskCardProps {
 export const TaskCard = ({ task, onUpdate, dragHandle, sortable = true }: TaskCardProps) => {
   const { t } = useTranslation();
   const { target } = useNavigation();
+  const { showSpending } = useBudget();
   const [showEditModal, setShowEditModal] = useState(false);
   const [showSubtaskModal, setShowSubtaskModal] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -164,7 +166,7 @@ export const TaskCard = ({ task, onUpdate, dragHandle, sortable = true }: TaskCa
             <div className="flex items-center gap-1.5 text-xs whitespace-nowrap">
               <span className="text-gray-500">💰</span>
               <span className="font-semibold text-gray-800">
-                {(task.totalPrice || 0).toFixed(2)}€
+                {showSpending ? `${(task.totalPrice || 0).toFixed(2)}€` : SPENDING_MASK}
               </span>
             </div>
           </div>

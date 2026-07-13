@@ -9,6 +9,7 @@ import { SortableList } from './SortableList';
 import { SubtaskSearch } from './SubtaskSearch';
 import { TodoListView } from './TodoListView';
 import { NavigationProvider } from '../contexts/NavigationContext';
+import { BudgetContext, SPENDING_MASK } from '../contexts/BudgetContext';
 import { exportToExcel } from '../utils/exportToExcel';
 
 export const Dashboard = () => {
@@ -23,10 +24,17 @@ export const Dashboard = () => {
     () => localStorage.getItem('remainingOnly') === 'true'
   );
   const [showTodoList, setShowTodoList] = useState(false);
+  const [showSpending, setShowSpending] = useState<boolean>(
+    () => localStorage.getItem('showSpending') !== 'false'
+  );
 
   useEffect(() => {
     localStorage.setItem('remainingOnly', String(remainingOnly));
   }, [remainingOnly]);
+
+  useEffect(() => {
+    localStorage.setItem('showSpending', String(showSpending));
+  }, [showSpending]);
 
   // In "remaining only" mode, hide anything already at 100%: completed subtasks,
   // completed tasks, and fully-complete categories.
@@ -142,18 +150,22 @@ export const Dashboard = () => {
 
   return (
     <NavigationProvider>
+    <BudgetContext.Provider value={{ showSpending }}>
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <header className="bg-gradient-to-br from-[#D97B8A] to-[#E8B4A1] shadow-lg sticky top-0 z-10 transition-all duration-300">
         <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-300 ${isScrolled ? 'py-2 sm:py-3' : 'py-6'}`}>
           {/* Title section - hidden on mobile when scrolled */}
           {!isScrolled && (
-            <div className="flex justify-between items-center mb-6 sm:mb-4">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">
-                {t('dashboard.heading')}
-              </h1>
-              <div className="flex items-center gap-2 sm:gap-3">
-                <span className="text-sm sm:text-base text-white/90">{user?.username || ''}</span>
-                <div className="w-px h-5 sm:h-6 bg-white/30"></div>
+            <div className="flex justify-between items-start mb-6 sm:mb-4">
+              <div className="min-w-0">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">
+                  {t('dashboard.heading')}
+                </h1>
+                {user?.username && (
+                  <p className="text-xs sm:text-sm text-white/80 mt-0.5 truncate">{user.username}</p>
+                )}
+              </div>
+              <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
                 {categories.length > 0 && (
                   <button
                     onClick={() => setShowTodoList((v) => !v)}
@@ -165,6 +177,26 @@ export const Dashboard = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                     </svg>
                     {t('dashboard.todoListButton')}
+                  </button>
+                )}
+                {categories.length > 0 && (
+                  <button
+                    onClick={() => setShowSpending((v) => !v)}
+                    aria-pressed={!showSpending}
+                    className="p-2 text-white hover:bg-white/20 rounded-md transition"
+                    title={showSpending ? t('dashboard.hideSpending') : t('dashboard.showSpending')}
+                    aria-label={showSpending ? t('dashboard.hideSpending') : t('dashboard.showSpending')}
+                  >
+                    {showSpending ? (
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    ) : (
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+                      </svg>
+                    )}
                   </button>
                 )}
                 {categories.length > 0 && (
@@ -195,11 +227,14 @@ export const Dashboard = () => {
 
           {/* Compact title for scrolled state on mobile */}
           {isScrolled && (
-            <div className="flex justify-between items-center sm:hidden mb-2">
-              <h1 className="text-lg font-bold text-white">{t('dashboard.heading')}</h1>
-              <div className="flex items-center gap-1">
-                <span className="text-xs text-white/90">{user?.username || ''}</span>
-                <div className="w-px h-4 bg-white/30"></div>
+            <div className="flex justify-between items-start gap-2 sm:hidden mb-2">
+              <div className="min-w-0">
+                <h1 className="text-lg font-bold text-white truncate">{t('dashboard.heading')}</h1>
+                {user?.username && (
+                  <p className="text-[11px] leading-tight text-white/80 truncate">{user.username}</p>
+                )}
+              </div>
+              <div className="flex items-center gap-1 flex-shrink-0">
                 {categories.length > 0 && (
                   <button
                     onClick={() => setShowTodoList((v) => !v)}
@@ -210,6 +245,26 @@ export const Dashboard = () => {
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                     </svg>
+                  </button>
+                )}
+                {categories.length > 0 && (
+                  <button
+                    onClick={() => setShowSpending((v) => !v)}
+                    aria-pressed={!showSpending}
+                    className="p-2 text-white hover:bg-white/20 rounded-md transition"
+                    title={showSpending ? t('dashboard.hideSpending') : t('dashboard.showSpending')}
+                    aria-label={showSpending ? t('dashboard.hideSpending') : t('dashboard.showSpending')}
+                  >
+                    {showSpending ? (
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    ) : (
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+                      </svg>
+                    )}
                   </button>
                 )}
                 {categories.length > 0 && (
@@ -263,7 +318,7 @@ export const Dashboard = () => {
                 {/* Budget - 5 columns */}
                 <div className="col-span-5 flex items-center gap-1 min-w-0">
                   <span className="font-bold text-white text-xs truncate">
-                    {totalBudget().toFixed(2)}€
+                    {showSpending ? `${totalBudget().toFixed(2)}€` : SPENDING_MASK}
                   </span>
                 </div>
 
@@ -314,7 +369,7 @@ export const Dashboard = () => {
                     {t('dashboard.totalBudget')}
                   </span>
                   <span className="font-bold text-white truncate text-xs sm:text-sm">
-                    {totalBudget().toFixed(2)}€
+                    {showSpending ? `${totalBudget().toFixed(2)}€` : SPENDING_MASK}
                   </span>
                 </div>
               </>
@@ -415,6 +470,7 @@ export const Dashboard = () => {
         onSuccess={loadCategories}
       />
     </div>
+    </BudgetContext.Provider>
     </NavigationProvider>
   );
 };
