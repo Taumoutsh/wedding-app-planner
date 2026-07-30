@@ -2,6 +2,7 @@ import { Response } from 'express';
 import { prisma } from '../utils/db';
 import { AuthRequest } from '../middleware/auth';
 import { CreateSubtaskRequest, UpdateSubtaskRequest, SubtaskDTO, ReorderRequest, SetTodoRequest } from '@wedding-planner/shared';
+import { taskWeddingId, subtaskWeddingId } from '../utils/scope';
 
 export const createSubtask = async (req: AuthRequest, res: Response) => {
   try {
@@ -20,6 +21,10 @@ export const createSubtask = async (req: AuthRequest, res: Response) => {
         error: 'Bad Request',
         message: 'Task ID is required',
       });
+    }
+
+    if ((await taskWeddingId(taskId)) !== req.user!.weddingId) {
+      return res.status(404).json({ error: 'Not Found', message: 'Task not found' });
     }
 
     const maxPosition = await prisma.subtask.aggregate({
@@ -66,6 +71,10 @@ export const updateSubtask = async (req: AuthRequest, res: Response) => {
       });
     }
 
+    if ((await subtaskWeddingId(parseInt(id))) !== req.user!.weddingId) {
+      return res.status(404).json({ error: 'Not Found', message: 'Subtask not found' });
+    }
+
     const subtask = await prisma.subtask.update({
       where: { id: parseInt(id) },
       data: {
@@ -95,6 +104,10 @@ export const deleteSubtask = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
 
+    if ((await subtaskWeddingId(parseInt(id))) !== req.user!.weddingId) {
+      return res.status(404).json({ error: 'Not Found', message: 'Subtask not found' });
+    }
+
     await prisma.subtask.delete({
       where: { id: parseInt(id) },
     });
@@ -121,6 +134,10 @@ export const setSubtaskTodo = async (req: AuthRequest, res: Response) => {
       });
     }
 
+    if ((await subtaskWeddingId(parseInt(id))) !== req.user!.weddingId) {
+      return res.status(404).json({ error: 'Not Found', message: 'Subtask not found' });
+    }
+
     const subtask = await prisma.subtask.update({
       where: { id: parseInt(id) },
       data: { inTodoList },
@@ -145,6 +162,16 @@ export const reorderSubtasks = async (req: AuthRequest, res: Response) => {
         error: 'Bad Request',
         message: 'orderedIds must be an array',
       });
+    }
+
+    const owned = await prisma.subtask.count({
+      where: {
+        id: { in: orderedIds },
+        task: { category: { weddingId: req.user!.weddingId ?? -1 } },
+      },
+    });
+    if (owned !== orderedIds.length) {
+      return res.status(403).json({ error: 'Forbidden', message: 'Cannot reorder these subtasks' });
     }
 
     await prisma.$transaction(

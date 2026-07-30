@@ -3,10 +3,17 @@ import { prisma } from '../utils/db';
 import { AuthRequest } from '../middleware/auth';
 import { CreateCategoryRequest, UpdateCategoryRequest, CategoryDTO, ReorderRequest } from '@wedding-planner/shared';
 import { calculateWeightedAverage, calculateTotalPrice } from '../utils/calculations';
+import { categoryWeddingId } from '../utils/scope';
 
 export const getAllCategories = async (req: AuthRequest, res: Response) => {
   try {
+    // Only the logged-in user's wedding. An admin with no active wedding sees none.
+    if (req.user!.weddingId == null) {
+      return res.json([]);
+    }
+
     const categories = await prisma.category.findMany({
+      where: { weddingId: req.user!.weddingId },
       include: {
         tasks: {
           orderBy: { position: 'asc' },
@@ -63,9 +70,19 @@ export const createCategory = async (req: AuthRequest, res: Response) => {
       });
     }
 
-    const maxPosition = await prisma.category.aggregate({ _max: { position: true } });
+    if (req.user!.weddingId == null) {
+      return res.status(400).json({
+        error: 'Bad Request',
+        message: 'No active wedding selected',
+      });
+    }
+
+    const maxPosition = await prisma.category.aggregate({
+      where: { weddingId: req.user!.weddingId },
+      _max: { position: true },
+    });
     const category = await prisma.category.create({
-      data: { name, position: (maxPosition._max.position ?? -1) + 1 },
+      data: { name, weddingId: req.user!.weddingId, position: (maxPosition._max.position ?? -1) + 1 },
       include: {
         tasks: {
           orderBy: { position: 'asc' },
@@ -105,6 +122,10 @@ export const updateCategory = async (req: AuthRequest, res: Response) => {
         error: 'Bad Request',
         message: 'Category name is required',
       });
+    }
+
+    if ((await categoryWeddingId(parseInt(id))) !== req.user!.weddingId) {
+      return res.status(404).json({ error: 'Not Found', message: 'Category not found' });
     }
 
     const category = await prisma.category.update({
@@ -154,6 +175,10 @@ export const deleteCategory = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
 
+    if ((await categoryWeddingId(parseInt(id))) !== req.user!.weddingId) {
+      return res.status(404).json({ error: 'Not Found', message: 'Category not found' });
+    }
+
     await prisma.category.delete({
       where: { id: parseInt(id) },
     });
@@ -177,6 +202,14 @@ export const reorderCategories = async (req: AuthRequest, res: Response) => {
         error: 'Bad Request',
         message: 'orderedIds must be an array',
       });
+    }
+
+    // Only reorder categories that belong to the user's wedding.
+    const owned = await prisma.category.count({
+      where: { id: { in: orderedIds }, weddingId: req.user!.weddingId ?? -1 },
+    });
+    if (owned !== orderedIds.length) {
+      return res.status(403).json({ error: 'Forbidden', message: 'Cannot reorder these categories' });
     }
 
     await prisma.$transaction(

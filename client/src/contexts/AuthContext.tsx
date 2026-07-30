@@ -6,6 +6,7 @@ interface AuthContextType {
   token: string | null;
   login: (token: string, user: UserDTO) => void;
   logout: () => void;
+  updateUser: (user: UserDTO) => void;
   isAuthenticated: boolean;
 }
 
@@ -54,6 +55,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(null);
   };
 
+  // Refresh the stored user after a server-side change (e.g. an admin
+  // switching their active wedding), keeping localStorage in sync.
+  const updateUser = (newUser: UserDTO) => {
+    localStorage.setItem('user', JSON.stringify(newUser));
+    setUser(newUser);
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -61,6 +69,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         token,
         login,
         logout,
+        updateUser,
         isAuthenticated: !!token,
       }}
     >

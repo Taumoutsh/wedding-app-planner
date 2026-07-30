@@ -7,10 +7,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Wedding {
+  id         Int        @id @default(autoincrement())
+  name       String
+  createdAt  DateTime   @default(now())
+  users      User[]
+  categories Category[]
+
+  @@map("weddings")
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   username  String   @unique
   password  String
+  isAdmin   Boolean  @default(false)
+  weddingId Int?
+  wedding   Wedding? @relation(fields: [weddingId], references: [id], onDelete: SetNull)
   createdAt DateTime @default(now())
 
   @@map("users")
@@ -19,6 +32,8 @@ model User {
 model Category {
   id        Int      @id @default(autoincrement())
   name      String
+  weddingId Int
+  wedding   Wedding  @relation(fields: [weddingId], references: [id], onDelete: Cascade)
   position  Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

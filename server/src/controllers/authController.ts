@@ -2,7 +2,22 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../utils/db';
-import { LoginRequest, LoginResponse } from '@wedding-planner/shared';
+import { LoginRequest, LoginResponse, UserDTO } from '@wedding-planner/shared';
+import { AuthRequest } from '../middleware/auth';
+
+const toUserDTO = (user: {
+  id: number;
+  username: string;
+  isAdmin: boolean;
+  weddingId: number | null;
+  wedding?: { name: string } | null;
+}): UserDTO => ({
+  id: user.id,
+  username: user.username,
+  isAdmin: user.isAdmin,
+  weddingId: user.weddingId,
+  weddingName: user.wedding?.name ?? null,
+});
 
 export const login = async (req: Request, res: Response) => {
   try {
@@ -17,6 +32,7 @@ export const login = async (req: Request, res: Response) => {
 
     const user = await prisma.user.findUnique({
       where: { username },
+      include: { wedding: true },
     });
 
     if (!user) {
@@ -43,10 +59,7 @@ export const login = async (req: Request, res: Response) => {
 
     const response: LoginResponse = {
       token,
-      user: {
-        id: user.id,
-        username: user.username,
-      },
+      user: toUserDTO(user),
     };
 
     res.json(response);
@@ -56,5 +69,25 @@ export const login = async (req: Request, res: Response) => {
       error: 'Internal Server Error',
       message: 'Login failed',
     });
+  }
+};
+
+// Returns the current user (fresh isAdmin/wedding), e.g. after an admin
+// switches their active wedding.
+export const me = async (req: AuthRequest, res: Response) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.user!.id },
+      include: { wedding: true },
+    });
+
+    if (!user) {
+      return res.status(401).json({ error: 'Unauthorized', message: 'User no longer exists' });
+    }
+
+    res.json(toUserDTO(user));
+  } catch (error) {
+    console.error('Me error:', error);
+    res.status(500).json({ error: 'Internal Server Error', message: 'Failed to load user' });
   }
 };
