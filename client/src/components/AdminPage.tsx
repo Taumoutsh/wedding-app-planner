@@ -184,20 +184,34 @@ export const AdminPage = ({ onBack }: { onBack: () => void }) => {
                       <li key={w.id} className="py-3 flex items-center gap-2 sm:gap-3">
                         <div className="min-w-0 flex-1">
                           {renamingId === w.id ? (
-                            <div className="flex gap-2">
+                            <div className="flex items-center gap-1.5 sm:gap-2">
                               <input
                                 value={renameValue}
                                 onChange={(e) => setRenameValue(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && handleRename(w.id)}
                                 autoFocus
-                                className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm"
+                                className="flex-1 min-w-0 h-10 px-2 border border-gray-300 rounded-md text-sm"
                                 style={{ fontSize: '16px' }}
                               />
-                              <button onClick={() => handleRename(w.id)} className="text-sm text-[#D97B8A] font-medium">
-                                {t('admin.save')}
+                              <button
+                                onClick={() => handleRename(w.id)}
+                                title={t('admin.save')}
+                                aria-label={t('admin.save')}
+                                className="p-2 rounded-md bg-[#D97B8A] text-white hover:opacity-90 transition flex-shrink-0"
+                              >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                </svg>
                               </button>
-                              <button onClick={() => setRenamingId(null)} className="text-sm text-gray-500">
-                                {t('admin.cancel')}
+                              <button
+                                onClick={() => setRenamingId(null)}
+                                title={t('admin.cancel')}
+                                aria-label={t('admin.cancel')}
+                                className="p-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-50 transition flex-shrink-0"
+                              >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
                               </button>
                             </div>
                           ) : (
@@ -219,32 +233,34 @@ export const AdminPage = ({ onBack }: { onBack: () => void }) => {
                             </>
                           )}
                         </div>
-                        <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
-                          <button
-                            onClick={() => {
-                              setRenamingId(w.id);
-                              setRenameValue(w.name);
-                            }}
-                            title={t('admin.rename')}
-                            aria-label={t('admin.rename')}
-                            className="p-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-50 transition"
-                          >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                            </svg>
-                          </button>
-                          <button
-                            onClick={() => setPendingDelete({ type: 'wedding', id: w.id, name: w.name })}
-                            disabled={isCurrent}
-                            className="p-2 rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition disabled:opacity-40 disabled:cursor-not-allowed"
-                            title={isCurrent ? t('admin.cannotDeleteCurrent') : t('admin.delete')}
-                            aria-label={t('admin.delete')}
-                          >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                          </button>
-                        </div>
+                        {renamingId !== w.id && (
+                          <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
+                            <button
+                              onClick={() => {
+                                setRenamingId(w.id);
+                                setRenameValue(w.name);
+                              }}
+                              title={t('admin.rename')}
+                              aria-label={t('admin.rename')}
+                              className="p-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-50 transition"
+                            >
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                              </svg>
+                            </button>
+                            <button
+                              onClick={() => setPendingDelete({ type: 'wedding', id: w.id, name: w.name })}
+                              disabled={isCurrent}
+                              className="p-2 rounded-md border border-red-200 text-red-600 hover:bg-red-50 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                              title={isCurrent ? t('admin.cannotDeleteCurrent') : t('admin.delete')}
+                              aria-label={t('admin.delete')}
+                            >
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                            </button>
+                          </div>
+                        )}
                       </li>
                     );
                   })}
