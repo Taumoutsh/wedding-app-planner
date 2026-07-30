@@ -6,6 +6,7 @@ import authRoutes from './routes/auth';
 import categoryRoutes from './routes/categories';
 import taskRoutes from './routes/tasks';
 import subtaskRoutes from './routes/subtasks';
+import adminRoutes from './routes/admin';
 import { errorHandler } from './middleware/errorHandler';
 
 dotenv.config();
@@ -26,6 +27,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/subtasks', subtaskRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Error handler (must be before SPA fallback)
 app.use(errorHandler);

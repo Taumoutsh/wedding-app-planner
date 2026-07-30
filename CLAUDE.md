@@ -6,13 +6,34 @@ Create a web application for organizing a wedding.
 ## Authentication & Security
 - This application will be accessible through a login and password
 - The password must be encrypted in the database
-- No account creation possible
-- Auth uses a JWT (30-day expiry) stored in localStorage
+- Accounts are created only by admins from the admin page (no self sign-up)
+- Auth uses a JWT (30-day expiry) stored in localStorage. The token carries only
+  the user id; `authenticateToken` loads the user fresh on every request so
+  role/wedding changes (e.g. an admin switching wedding) take effect immediately
 - Session expiry handling: when any API request returns 401/403 (expired or
   invalid token), the axios response interceptor in `client/src/services/api.ts`
   clears the stored session and dispatches an `auth:unauthorized` event.
   `AuthContext` listens for this event and resets auth state, returning the user
   to the login screen instead of showing an empty dashboard.
+
+## Multi-tenancy & Administration
+- The database holds multiple **weddings** (projects). A `Wedding` owns its
+  `Category` rows (→ tasks → subtasks) and its `User` accounts
+- Each `User` has `weddingId` (the wedding it works in) and `isAdmin`. Every data
+  API is scoped to the caller's `weddingId` (see `server/src/utils/scope.ts` for
+  the ownership guards on mutations); a user only ever sees/edits their wedding
+- **Admins** get an admin page (gear icon in the header, `client/src/components/
+  AdminPage.tsx`) but have **no** extra power inside a project. From it they can:
+  create/rename/delete weddings, create/delete accounts, reset passwords, and
+  grant/revoke admin. An admin stays tied to their own wedding (set in the DB);
+  there is no in-app "switch wedding" — the Accounts wedding picker only filters
+  which wedding's accounts are shown
+- Account passwords are **server-generated** (16-char alphanumeric, CSPRNG) and
+  returned once in plaintext so the admin can hand them over — never stored in
+  the clear. Admin routes live under `/api/admin` behind `requireAdmin`
+- The first admin is set manually in the DB (`UPDATE users SET isAdmin = 1 …`).
+  Migration `add_weddings_and_admin` seeds a default wedding (id 1) and attaches
+  all pre-existing users and categories to it
 
 ## Technical Requirements
 - Use standard HTTP requests for data transmission
@@ -233,6 +254,7 @@ Translations are organized by component/feature:
 - `confirmDialog` - Confirmation dialog translations
 - `search` - Subtask search field placeholder and dropdown labels
 - `todo` - Todo list view title, empty state, and check action
+- `admin` - Administration page (weddings/accounts management, password reveal)
 - `export` - Excel export button, sheet names, column headers, and chart titles
 - `common` - Shared labels (e.g. drag-to-reorder handle)
 

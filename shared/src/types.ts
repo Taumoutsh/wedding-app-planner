@@ -1,13 +1,22 @@
+export interface Wedding {
+  id: number;
+  name: string;
+  createdAt: Date;
+}
+
 export interface User {
   id: number;
   username: string;
   password: string;
+  isAdmin: boolean;
+  weddingId: number | null;
   createdAt: Date;
 }
 
 export interface Category {
   id: number;
   name: string;
+  weddingId: number;
   position: number;
   createdAt: Date;
   updatedAt: Date;
@@ -50,6 +59,26 @@ export interface Subtask {
 export interface UserDTO {
   id: number;
   username: string;
+  isAdmin: boolean;
+  weddingId: number | null;
+  weddingName: string | null;
+}
+
+export interface WeddingDTO {
+  id: number;
+  name: string;
+  createdAt: Date;
+  userCount: number;
+  categoryCount: number;
+}
+
+// A user account as listed in the admin page (no password hash).
+export interface AdminUserDTO {
+  id: number;
+  username: string;
+  isAdmin: boolean;
+  weddingId: number | null;
+  createdAt: Date;
 }
 
 export interface CategoryDTO extends Omit<Category, 'averageProgress' | 'totalPrice'> {
@@ -127,6 +156,31 @@ export interface ReorderRequest {
 
 export interface SetTodoRequest {
   inTodoList: boolean;
+}
+
+// ---- Admin ----------------------------------------------------------------
+export interface CreateWeddingRequest {
+  name: string;
+}
+
+export interface UpdateWeddingRequest {
+  name: string;
+}
+
+export interface CreateUserRequest {
+  username: string;
+  weddingId: number;
+}
+
+export interface SetUserAdminRequest {
+  isAdmin: boolean;
+}
+
+// Returned when an account is created or its password reset — carries the
+// generated plaintext password once so the admin can hand it over.
+export interface UserWithPasswordDTO {
+  user: AdminUserDTO;
+  password: string;
 }
 
 export interface ErrorResponse {

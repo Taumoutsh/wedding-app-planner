@@ -12,7 +12,11 @@ import { NavigationProvider } from '../contexts/NavigationContext';
 import { BudgetContext, SPENDING_MASK } from '../contexts/BudgetContext';
 import { exportToExcel } from '../utils/exportToExcel';
 
-export const Dashboard = () => {
+interface DashboardProps {
+  onOpenAdmin?: () => void;
+}
+
+export const Dashboard = ({ onOpenAdmin }: DashboardProps) => {
   const { user, logout } = useAuth();
   const { t, language } = useTranslation();
   const [categories, setCategories] = useState<CategoryDTO[]>([]);
@@ -162,7 +166,10 @@ export const Dashboard = () => {
                   {t('dashboard.heading')}
                 </h1>
                 {user?.username && (
-                  <p className="text-xs sm:text-sm text-white/80 mt-0.5 truncate">{user.username}</p>
+                  <p className="text-xs sm:text-sm text-white/80 mt-0.5 truncate">
+                    {user.username}
+                    {user.weddingName ? <span className="text-white/60"> · {user.weddingName}</span> : ''}
+                  </p>
                 )}
               </div>
               <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
@@ -212,6 +219,19 @@ export const Dashboard = () => {
                     {exporting ? t('export.exporting') : t('export.button')}
                   </button>
                 )}
+                {user?.isAdmin && onOpenAdmin && (
+                  <button
+                    onClick={onOpenAdmin}
+                    className="p-2 text-white hover:bg-white/20 rounded-md transition"
+                    title={t('admin.title')}
+                    aria-label={t('admin.title')}
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </button>
+                )}
                 <button
                   onClick={logout}
                   className="p-2 text-white hover:bg-white/20 rounded-md transition"
@@ -231,7 +251,10 @@ export const Dashboard = () => {
               <div className="min-w-0">
                 <h1 className="text-lg font-bold text-white truncate">{t('dashboard.heading')}</h1>
                 {user?.username && (
-                  <p className="text-[11px] leading-tight text-white/80 truncate">{user.username}</p>
+                  <p className="text-[11px] leading-tight text-white/80 truncate">
+                    {user.username}
+                    {user.weddingName ? <span className="text-white/60"> · {user.weddingName}</span> : ''}
+                  </p>
                 )}
               </div>
               <div className="flex items-center gap-1 flex-shrink-0">
@@ -276,6 +299,19 @@ export const Dashboard = () => {
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                  </button>
+                )}
+                {user?.isAdmin && onOpenAdmin && (
+                  <button
+                    onClick={onOpenAdmin}
+                    className="p-2 text-white hover:bg-white/20 rounded-md transition"
+                    title={t('admin.title')}
+                    aria-label={t('admin.title')}
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                   </button>
                 )}

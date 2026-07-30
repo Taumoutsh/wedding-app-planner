@@ -11,6 +11,10 @@ import type {
   UpdateSubtaskRequest,
   TaskDTO,
   SubtaskDTO,
+  UserDTO,
+  WeddingDTO,
+  AdminUserDTO,
+  UserWithPasswordDTO,
 } from '@wedding-planner/shared';
 
 const api = axios.create({
@@ -43,6 +47,22 @@ api.interceptors.response.use(
 
 export const authApi = {
   login: (data: LoginRequest) => api.post<LoginResponse>('/auth/login', data),
+  me: () => api.get<UserDTO>('/auth/me'),
+};
+
+export const adminApi = {
+  listWeddings: () => api.get<WeddingDTO[]>('/admin/weddings'),
+  createWedding: (name: string) => api.post<WeddingDTO>('/admin/weddings', { name }),
+  renameWedding: (id: number, name: string) => api.put<WeddingDTO>(`/admin/weddings/${id}`, { name }),
+  deleteWedding: (id: number) => api.delete(`/admin/weddings/${id}`),
+
+  listUsers: () => api.get<AdminUserDTO[]>('/admin/users'),
+  createUser: (username: string, weddingId: number) =>
+    api.post<UserWithPasswordDTO>('/admin/users', { username, weddingId }),
+  resetPassword: (id: number) => api.put<UserWithPasswordDTO>(`/admin/users/${id}/password`),
+  setUserAdmin: (id: number, isAdmin: boolean) =>
+    api.put<AdminUserDTO>(`/admin/users/${id}/admin`, { isAdmin }),
+  deleteUser: (id: number) => api.delete(`/admin/users/${id}`),
 };
 
 export const categoryApi = {

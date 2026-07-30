@@ -3,6 +3,7 @@ import { prisma } from '../utils/db';
 import { AuthRequest } from '../middleware/auth';
 import { CreateTaskRequest, UpdateTaskRequest, TaskDTO, ReorderRequest } from '@wedding-planner/shared';
 import { calculateWeightedAverage, calculateTotalPrice } from '../utils/calculations';
+import { categoryWeddingId, taskWeddingId } from '../utils/scope';
 
 export const createTask = async (req: AuthRequest, res: Response) => {
   try {
@@ -20,6 +21,10 @@ export const createTask = async (req: AuthRequest, res: Response) => {
         error: 'Bad Request',
         message: 'Category ID is required',
       });
+    }
+
+    if ((await categoryWeddingId(categoryId)) !== req.user!.weddingId) {
+      return res.status(404).json({ error: 'Not Found', message: 'Category not found' });
     }
 
     const maxPosition = await prisma.task.aggregate({
@@ -67,6 +72,10 @@ export const updateTask = async (req: AuthRequest, res: Response) => {
       });
     }
 
+    if ((await taskWeddingId(parseInt(id))) !== req.user!.weddingId) {
+      return res.status(404).json({ error: 'Not Found', message: 'Task not found' });
+    }
+
     const task = await prisma.task.update({
       where: { id: parseInt(id) },
       data: {
@@ -99,6 +108,10 @@ export const deleteTask = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
 
+    if ((await taskWeddingId(parseInt(id))) !== req.user!.weddingId) {
+      return res.status(404).json({ error: 'Not Found', message: 'Task not found' });
+    }
+
     await prisma.task.delete({
       where: { id: parseInt(id) },
     });
@@ -122,6 +135,13 @@ export const reorderTasks = async (req: AuthRequest, res: Response) => {
         error: 'Bad Request',
         message: 'orderedIds must be an array',
       });
+    }
+
+    const owned = await prisma.task.count({
+      where: { id: { in: orderedIds }, category: { weddingId: req.user!.weddingId ?? -1 } },
+    });
+    if (owned !== orderedIds.length) {
+      return res.status(403).json({ error: 'Forbidden', message: 'Cannot reorder these tasks' });
     }
 
     await prisma.$transaction(
